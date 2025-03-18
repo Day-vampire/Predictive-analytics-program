@@ -1,0 +1,64 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.7.1
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+
+  kafka:
+    image: confluentinc/cp-kafka:7.7.1
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:v0.7.2
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - 8888:8080
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      DYNAMIC_CONFIG_ENABLED: true
+
+  file-service:
+    build:
+      dockerfile: file-service.Dockerfile
+    container_name: file-service
+    environment:
+      - SERVER_PORT=${FILE_SERVICE_SERVER_PORT}
+      - SPRING_DATASOURCE_URL=${FILE_SERVICE_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${FILE_SERVICE_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${FILE_SERVICE_DATASOURCE_PASSWORD}
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=${FILE_SERVICE_KAFKA_BOOTSTRAP_SERVERS}
+    depends_on:
+      - file-service-db
+      - kafka
+    ports:
+      - ${FILE_SERVICE_HOST_PORT}:${FILE_SERVICE_CONTAINER_PORT}
+
+  file-service-db:
+    image: postgres:15-alpine
+    container_name: FileServiceDB
+    environment:
+      POSTGRES_DB: ${FILE_SERVICE_DATASOURCE_NAME}
+      POSTGRES_USER: ${FILE_SERVICE_DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${FILE_SERVICE_DATASOURCE_PASSWORD}
+    ports:
+      - ${FILE_SERVICE_DATASOURCE_HOST_PORT}:${FILE_SERVICE_DATASOURCE_CONTAINER_PORT}
+
