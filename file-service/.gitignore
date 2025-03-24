@@ -22,7 +22,7 @@ target/
 
 ### ENVORIMENT ###
 
-.env.file-service
+.env
 
 ### NetBeans ###
 /nbproject/private/
