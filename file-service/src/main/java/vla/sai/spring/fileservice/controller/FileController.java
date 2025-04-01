@@ -25,7 +25,8 @@ import vla.sai.spring.fileservice.service.StorageService;
 
 
 @RestController
-public class FileUploadController {
+@RequestMapping (value ="/file_")
+public class FileController {
 
     private final StorageService storageService;
     @Autowired
