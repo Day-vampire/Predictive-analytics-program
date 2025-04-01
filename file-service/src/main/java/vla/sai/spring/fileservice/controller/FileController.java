@@ -1,24 +1,11 @@
 package vla.sai.spring.fileservice.controller;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Field;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import vla.sai.spring.fileservice.entity.FileInfo_;
-import vla.sai.spring.fileservice.exeption.StorageFileNotFoundException;
 import vla.sai.spring.fileservice.service.StorageService;
 import vla.sai.spring.fileservice.util.FileUtil;
 
@@ -31,6 +18,7 @@ public class FileController {
     private final StorageService storageService;
 
     @PostMapping("/upload-file")
+    @Operation(summary = "Обновление файла")
     public void uploadFile (@RequestParam("file") MultipartFile file) {
         File uploadedFile = FileUtil.saveFile(file,"users");
     }

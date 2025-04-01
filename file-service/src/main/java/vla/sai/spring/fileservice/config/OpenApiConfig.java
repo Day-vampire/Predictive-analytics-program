@@ -1,0 +1,43 @@
+package vla.sai.spring.fileservice.config;
+
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.annotations.OpenAPI30;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+
+import java.util.Collections;
+
+@Configuration
+@OpenAPI30
+@RequiredArgsConstructor
+public class OpenApiConfig {
+
+    private final Environment env;
+
+    @Value("${springdoc.swagger-ui.enabled}")
+    private boolean swaggerEnabled;
+
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+
+    @Value("${server.port}")
+    private String port;
+
+    @Bean
+    public OpenAPI openAPIDefinition() {
+        String swaggerHost = (swaggerEnabled)? env.getRequiredProperty("SWAGGER_HOST") : "localhost";
+        return new OpenAPI()
+                .info(new Info()
+                        .title("File service")
+                        .version("v0.0.1")
+                        .description("Сервис для работы с файлами"))
+                .servers(Collections.singletonList(new Server()
+                        .description("Рабочий сервер")
+                        .url(String.format("http://%s:%s/%s", swaggerHost,port,contextPath ))));
+    }
+}
