@@ -3,7 +3,9 @@ package vla.sai.spring.fileservice.controller;
 import java.io.File;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vla.sai.spring.fileservice.service.StorageService;
@@ -11,16 +13,17 @@ import vla.sai.spring.fileservice.util.FileUtil;
 
 
 @RestController
-@RequestMapping (value ="/files")
+@RequestMapping(value = "/files")
 @RequiredArgsConstructor
 public class FileController {
 
     private final StorageService storageService;
 
-    @PostMapping("/upload-file")
-    @Operation(summary = "Обновление файла")
-    public void uploadFile (@RequestParam("file") MultipartFile file) {
-        File uploadedFile = FileUtil.saveFile(file,"users");
+    @PostMapping(path= "/upload-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Обновление файла", description = "Загружает файл и сохраняет его на сервере.")
+    public void uploadFile(@Parameter(description = "Файл для загрузки", required = true)
+                           @RequestParam("file") MultipartFile file) {
+        File uploadedFile = FileUtil.saveFile(file, "users");
     }
 //
 //    @GetMapping("/")

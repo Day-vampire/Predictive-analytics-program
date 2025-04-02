@@ -17,7 +17,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class OpenApiConfig {
 
-    private final Environment env;
+    private final Environment environment;
 
     @Value("${springdoc.swagger-ui.enabled}")
     private boolean swaggerEnabled;
@@ -30,7 +30,7 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI openAPIDefinition() {
-        String swaggerHost = (swaggerEnabled)? env.getRequiredProperty("SWAGGER_HOST") : "localhost";
+        String swaggerHost = (swaggerEnabled)? environment.getRequiredProperty("SWAGGER_HOSTNAME") : "localhost";
         return new OpenAPI()
                 .info(new Info()
                         .title("File service")
@@ -38,6 +38,6 @@ public class OpenApiConfig {
                         .description("Сервис для работы с файлами"))
                 .servers(Collections.singletonList(new Server()
                         .description("Рабочий сервер")
-                        .url(String.format("http://%s:%s/%s", swaggerHost,port,contextPath ))));
+                        .url("http://"+swaggerHost+":"+port+contextPath )));
     }
 }

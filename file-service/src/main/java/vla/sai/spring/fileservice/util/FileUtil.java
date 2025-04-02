@@ -11,7 +11,7 @@ import java.nio.file.Path;
 public class FileUtil {
     public static File saveFile(MultipartFile file, String login) {
         try{
-            Path directoryPath = Files.createDirectory(Path.of("working_files",login));
+            Path directoryPath = Files.createDirectories(Path.of("working_files",login));
             String baseName = FilenameUtils.getBaseName(file.getOriginalFilename());
             String extension = FilenameUtils.getExtension(file.getOriginalFilename());
             String fileName = String.format("%s8%s", baseName, extension);
