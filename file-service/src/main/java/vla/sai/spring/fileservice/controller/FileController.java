@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vla.sai.spring.fileservice.service.StorageService;
+import vla.sai.spring.fileservice.dto.FileDataDto;
+import vla.sai.spring.fileservice.dto.FileInfoDto;
+import vla.sai.spring.fileservice.service.FileInfoService;
 import vla.sai.spring.fileservice.util.FileUtil;
 
 
@@ -17,13 +19,15 @@ import vla.sai.spring.fileservice.util.FileUtil;
 @RequiredArgsConstructor
 public class FileController {
 
-    private final StorageService storageService;
+    private final FileInfoService fileInfoService;
 
     @PostMapping(path= "/upload-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Обновление файла", description = "Загружает файл и сохраняет его на сервере.")
-    public void uploadFile(@Parameter(description = "Файл для загрузки", required = true)
-                           @RequestParam("file") MultipartFile file) {
-        File uploadedFile = FileUtil.saveFile(file, "users");
+    @Operation(summary = "Обновление/загрузка файла", description = "Загружает файл и обновляет/сохраняет его на сервере.")
+    public FileInfoDto uploadFile(@Parameter(description = "Файл для загрузки", required = true)
+                           @RequestParam("file") MultipartFile file,
+                                  @RequestParam("FileDataDto") FileDataDto fileDataDto) {
+        File uploadedFile = FileUtil.saveFile(file, fileDataDto.getFileAuthorName());
+        return fileInfoService.save(file,fileDataDto);
     }
 //
 //    @GetMapping("/")

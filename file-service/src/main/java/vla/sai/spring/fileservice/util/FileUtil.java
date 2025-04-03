@@ -14,14 +14,9 @@ public class FileUtil {
             Path directoryPath = Files.createDirectories(Path.of("working_files",login));
             String baseName = FilenameUtils.getBaseName(file.getOriginalFilename());
             String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-            String fileName = String.format("%s8%s", baseName, extension);
+            String fileName = String.format("%s.%s", baseName, extension);
             Path fullFilePath = Path.of(directoryPath.toString(), fileName);
             file.transferTo(fullFilePath);
-            System.out.println("\n\n///////////////////////////// \n\n");
-            System.out.println("\n" + directoryPath.toString());
-            System.out.println("\n" + fileName + extension + baseName );
-            System.out.println("\n" + fullFilePath);
-            System.out.println("\n\n///////////////////////////// \n\n");
             return fullFilePath.toFile();
         } catch (IOException e) {
             throw new RuntimeException(e);
