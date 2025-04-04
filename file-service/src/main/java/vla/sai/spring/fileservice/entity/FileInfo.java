@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -15,9 +14,6 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 public class FileInfo {
-
-    @Column(name = "id", insertable = false, updatable = false)
-    private Long id;
 
     @EmbeddedId
     private FileId fileId;

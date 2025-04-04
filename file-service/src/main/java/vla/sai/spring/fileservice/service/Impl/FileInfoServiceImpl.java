@@ -6,46 +6,65 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vla.sai.spring.fileservice.dto.FileDataDto;
-import vla.sai.spring.fileservice.dto.FileInfoDto;
-import vla.sai.spring.fileservice.entity.FileExtension;
-import vla.sai.spring.fileservice.entity.FileId;
-import vla.sai.spring.fileservice.entity.FileInfo;
-import vla.sai.spring.fileservice.entity.FileStatus;
+import vla.sai.spring.fileservice.entity.*;
+import vla.sai.spring.fileservice.exception.AlreadyExistException;
 import vla.sai.spring.fileservice.repository.FileInfoRepository;
 import vla.sai.spring.fileservice.service.FileInfoService;
+import vla.sai.spring.fileservice.util.FileUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class FileInfoServiceImpl implements FileInfoService {
 
-    private FileInfoRepository fileInfoRepository;
+    private final FileInfoRepository fileInfoRepository;
 
     @Override
     @Transactional
-    public FileInfoDto save(MultipartFile file, FileDataDto fileDataDto) {
-        FileInfo fileInfo = FileInfo
+    public FileInfo saveFileInfo(MultipartFile file, FileDataDto fileDataDto) {
+
+        String fileAuthorName = Optional.ofNullable(fileDataDto.getFileAuthorName())
+                .filter(name -> !name.isBlank())
+                .orElseThrow(() -> new IllegalArgumentException("fileAuthorName is null or empty"));
+
+        String fullFileName = Optional.ofNullable(file.getOriginalFilename())
+                .filter(name -> !name.isBlank())
+                .orElseThrow(() -> new IllegalArgumentException("fullFileName is null or empty"));
+
+        FileId fileId = new FileId(FilenameUtils.getBaseName(fullFileName), fileAuthorName);
+
+        if (fileInfoRepository.existsByFileId(fileId)) throw new AlreadyExistException("File with this file name: %s and author name: %s already exists".formatted(fileId.getFileName(), fileAuthorName));
+
+        FileExtension fileExtension = Arrays
+                .stream(FileExtension.values())
+                .filter(ext -> ext.getValue().equalsIgnoreCase(FilenameUtils.getExtension(fullFileName)))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Not founded fileExtension: %s [saveFileData]"
+                                .formatted(FilenameUtils.getExtension(fullFileName))));
+
+        FileDataType fileDataType = Arrays.stream(FileDataType.values())
+                .filter(fdt -> fdt.getValue().equalsIgnoreCase(fileDataDto.getFileDataType().getValue()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Not founded fileDataType: %s [saveFileData]"
+                                .formatted(fileDataDto.getFileDataType().getValue())));
+
+        FileUtil.saveFile(file, fileDataDto);
+        return fileInfoRepository.save(FileInfo
                 .builder()
-                .fileId(FileId
-                        .builder()
-                        .fileName(FilenameUtils.getBaseName(file.getOriginalFilename()))
-                        .fileAuthorName(fileDataDto.getFileAuthorName())
-                        .build())
-                .fileExtension(Arrays
-                        .stream(FileExtension.values())
-                        .filter(ext -> ext.getValue().equalsIgnoreCase(FilenameUtils.getExtension(file.getOriginalFilename())))
-                        .findFirst().orElse(FileExtension.NON))
-                .id(1L)
+                .fileId(fileId)
+                .fileExtension(fileExtension)
+                .fileStatus(FileStatus.VALID)
                 .fileSize(BigDecimal.valueOf(file.getSize()))
-                .fileStatus(FileStatus.NEW)
-                .fileType(fileDataDto.getFileDataType())
+                .fileType(fileDataType)
                 .createTime(LocalDateTime.now())
                 .lastModificationTime(LocalDateTime.now())
-                .build();
-        fileInfo.setFileStatus((fileInfo.getFileExtension().getValue().equals(FileExtension.NON.getValue()))?FileStatus.NOT_VALID:FileStatus.VALID);
-        return fileInfoRepository.save(fileInfo);
-        }
-    }
+                .build());
+
+
+}}

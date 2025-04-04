@@ -1,16 +1,15 @@
 package vla.sai.spring.fileservice.dto;
 
 
-import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 import vla.sai.spring.fileservice.entity.FileDataType;
 
 import java.io.Serializable;
 
 @Data
+@Builder
 public class FileDataDto implements Serializable {
-    @NotNull
     private String fileAuthorName;
-    @NotNull
     private FileDataType fileDataType;
 }

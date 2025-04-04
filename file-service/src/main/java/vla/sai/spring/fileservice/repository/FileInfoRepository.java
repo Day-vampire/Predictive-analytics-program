@@ -1,11 +1,16 @@
 package vla.sai.spring.fileservice.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import vla.sai.spring.fileservice.dto.FileInfoDto;
+import org.springframework.stereotype.Repository;
 import vla.sai.spring.fileservice.entity.FileId;
 import vla.sai.spring.fileservice.entity.FileInfo;
 
+import java.util.List;
+import java.util.Optional;
+@Repository
 public interface FileInfoRepository extends JpaRepository<FileInfo, FileId> {
 
-    FileInfoDto save(FileInfo fileInfo);
+    FileInfo save(FileInfo fileInfo);
+    List<FileInfo> findAll();
+    Boolean existsByFileId(FileId fileId);
 }
