@@ -1,13 +1,13 @@
-package vla.sai.spring.analiticsservice;
+package vla.sai.spring.analyticsservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AnaliticsServiceApplication {
+public class AnalyticsServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AnaliticsServiceApplication.class, args);
+        SpringApplication.run(AnalyticsServiceApplication.class, args);
     }
 
 }

@@ -12,7 +12,7 @@ import java.nio.file.Path;
 public class FileUtil {
     public static void saveFile(MultipartFile file, FileDataDto fileDataDto) {
         try{
-            Path directoryPath = Files.createDirectories(Path.of(fileDataDto.getFileDataType().getValue(), fileDataDto.getFileAuthorName()));
+            Path directoryPath = Files.createDirectories(Path.of("Files", fileDataDto.getFileDataType().getValue(), fileDataDto.getFileAuthorName()));
             String baseName = FilenameUtils.getBaseName(file.getOriginalFilename());
             String extension = FilenameUtils.getExtension(file.getOriginalFilename());
             String fileName = String.format("%s.%s", baseName, extension);

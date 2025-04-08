@@ -1,4 +1,4 @@
-package vla.sai.spring.analiticsservice.exception;
+package vla.sai.spring.analyticsservice.exception;
 
 
 public class NotFoundException extends RuntimeException {

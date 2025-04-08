@@ -1,4 +1,4 @@
-package vla.sai.spring.analiticsservice.config;
+package vla.sai.spring.analyticsservice.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.annotations.OpenAPI30;
@@ -33,9 +33,9 @@ public class OpenApiConfig {
         String swaggerHost = (swaggerEnabled)? environment.getRequiredProperty("SWAGGER_HOSTNAME") : "localhost";
         return new OpenAPI()
                 .info(new Info()
-                        .title("File service")
+                        .title("Analytics service")
                         .version("v0.0.1")
-                        .description("Сервис для работы с файлами"))
+                        .description("Сервис для работы с аналитикой данных"))
                 .servers(Collections.singletonList(new Server()
                         .description("Рабочий сервер")
                         .url("http://"+swaggerHost+":"+port+contextPath )));

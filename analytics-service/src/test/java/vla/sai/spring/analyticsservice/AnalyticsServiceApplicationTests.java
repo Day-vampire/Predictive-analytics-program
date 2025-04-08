@@ -1,10 +1,10 @@
-package vla.sai.spring.analiticsservice;
+package vla.sai.spring.analyticsservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AnaliticsServiceApplicationTests {
+class AnalyticsServiceApplicationTests {
 
     @Test
     void contextLoads() {

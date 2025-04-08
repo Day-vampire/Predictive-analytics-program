@@ -13,4 +13,17 @@
       <option name="Make" enabled="true" />
     </method>
   </configuration>
+  <configuration default="false" name="FileServiceApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <option name="envFilePaths">
+      <option value="$PROJECT_DIR$/file-service/.run/.env" />
+    </option>
+    <module name="file-service" />
+    <selectedOptions>
+      <option name="environmentVariables" />
+    </selectedOptions>
+    <option name="SPRING_BOOT_MAIN_CLASS" value="vla.sai.spring.fileservice.FileServiceApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
 </component>
