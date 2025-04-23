@@ -1,9 +1,9 @@
-package vla.sai.spring.fileservice.dto;
+package vla.sai.spring.analyticsservice.dto;
 
 
 import lombok.Builder;
 import lombok.Data;
-import vla.sai.spring.fileservice.entity.FileDataType;
+import vla.sai.spring.analyticsservice.entity.FileDataType;
 
 import java.io.Serializable;
 

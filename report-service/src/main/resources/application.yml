@@ -1,0 +1,42 @@
+######### Spring/DB/liquibase configs #########
+
+spring:
+  config:
+    import: optional:file:.env
+  application:
+    name: report-file
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    database: postgresql
+  datasource:
+    url: ${REPORT_SERVICE_DATASOURCE_URL}
+    username: ${REPORT_SERVICE_DATASOURCE_USERNAME}
+    password: ${REPORT_SERVICE_DATASOURCE_PASSWORD}
+  liquibase:
+    password: ${REPORT_SERVICE_DATASOURCE_PASSWORD}
+  cloud:
+    openfeign:
+      client:
+        config:
+          fileFeignClient:
+            url: ${FILE_SERVICE_URL}
+
+server:
+  port: ${REPORT_SERVICE_SERVER_PORT}
+  servlet:
+    context-path: /api/file-service
+
+
+######### Swagger #########
+
+springdoc:
+  api-docs:
+    enabled: ${SWAGGER_ENABLED}
+    path: /api-docs
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED}
+    path: /swagger
+
+######### Feign #########
