@@ -5,6 +5,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import vla.sai.spring.fileservice.dto.FileDataDto;
+import vla.sai.spring.fileservice.exception.KafkaProducerException;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,11 +20,10 @@ public class Producer {
 
     public void sendCreatedFileData(File file, FileDataDto fileDataDto) {
         try {
-            byte[] fileContent = Files.readAllBytes(file.toPath());
-            ProducerRecord<FileDataDto, byte[]> producerRecord = new ProducerRecord<>("file_create_topic", fileDataDto, fileContent);
+            ProducerRecord<FileDataDto, byte[]> producerRecord = new ProducerRecord<>("file_create_topic", fileDataDto,Files.readAllBytes(file.toPath()));
             kafkaTemplateCreateFile.send(producerRecord);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new KafkaProducerException("Method (sendCreatedFileData)",e);
         }
     }
 

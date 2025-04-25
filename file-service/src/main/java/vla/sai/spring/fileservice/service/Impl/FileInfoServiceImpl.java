@@ -30,7 +30,6 @@ public class FileInfoServiceImpl implements FileInfoService {
         String fileAuthorName = Optional.ofNullable(fileDataDto.getFileAuthorName())
                 .filter(name -> !name.isBlank())
                 .orElseThrow(() -> new IllegalArgumentException("fileAuthorName is null or empty"));
-
         String fullFileName = Optional.ofNullable(file.getOriginalFilename())
                 .filter(name -> !name.isBlank())
                 .orElseThrow(() -> new IllegalArgumentException("fullFileName is null or empty"));

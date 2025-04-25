@@ -8,6 +8,21 @@
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="https://maven.asb.by:8443/maven" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="repo-belarusbank" />
+      <option name="name" value="Reposilite Belarusbank" />
+      <option name="url" value="https://maven.asb.by:8443/belarusbank" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="repo-maven" />
+      <option name="name" value="Reposilite Belarusbank" />
+      <option name="url" value="https://maven.asb.by:8443/maven" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
       <option name="name" value="Maven Central repository" />
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
