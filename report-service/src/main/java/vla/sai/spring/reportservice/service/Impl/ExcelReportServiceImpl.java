@@ -4,34 +4,30 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import vla.sai.spring.reportservice.dto.FilterParameters;
 import vla.sai.spring.reportservice.exception.ExcelExportException;
 import vla.sai.spring.reportservice.exception.FieldAccessException;
-import vla.sai.spring.reportservice.service.ReportService;
+import vla.sai.spring.reportservice.service.ExcelReportService;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.stream.IntStream;
 
 
 @Service
-public class ReportServiceImpl implements ReportService {
+public class ExcelReportServiceImpl implements ExcelReportService {
 
     private static final int MAX_ROWS_FOR_SHEET = 1000;
 
     @Override
-    public StreamingResponseBody toExcel(FilterParameters filterParameters) {
+    public StreamingResponseBody dataToExcel(Object object) {
         return outputStream -> {
             try (Workbook workbook = new SXSSFWorkbook(100)) { // создание потоковой книги (по умолчанию 100 строк)
                 int sheetCount = 0;
                 int rowCount = 0;
                 Field[] fields = Object.class.getDeclaredFields(); // получение полей для заголовков и ячеек
                 Sheet sheet = createSheet(workbook, "List-%d".formatted(++sheetCount), fields); // создание листа с нужным названием и полями
-                filterParameters.setPage(0);
 //                while (true) {
 //
 //                    if (objectDtoContent.isEmpty()) {
@@ -55,6 +51,18 @@ public class ReportServiceImpl implements ReportService {
             }
         };
     }
+
+
+    @Override
+    public StreamingResponseBody smoothingGraphToExcel(Object object) {
+        return null;
+    }
+
+    @Override
+    public StreamingResponseBody holtWintersGraphToExcel(Object object) {
+        return null;
+    }
+
 
     // Создание стриницы с заголовками
     private Sheet createSheet(Workbook workbook, String sheetName, Field[] fields) {
