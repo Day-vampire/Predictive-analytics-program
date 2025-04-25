@@ -7,4 +7,5 @@ public interface PdfReportService {
     StreamingResponseBody dataToPdf(Object object);
     StreamingResponseBody smoothingGraphToPdf(Object object);
     StreamingResponseBody holtWintersGraphToPdf(Object object);
+    StreamingResponseBody arimaToPdf(Object object);
 }

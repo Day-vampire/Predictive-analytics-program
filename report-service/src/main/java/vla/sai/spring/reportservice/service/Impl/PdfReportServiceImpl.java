@@ -32,4 +32,9 @@ public class PdfReportServiceImpl implements PdfReportService {
     public StreamingResponseBody holtWintersGraphToPdf(Object object) {
         return null;
     }
+
+    @Override
+    public StreamingResponseBody arimaToPdf(Object object) {
+        return null;
+    }
 }

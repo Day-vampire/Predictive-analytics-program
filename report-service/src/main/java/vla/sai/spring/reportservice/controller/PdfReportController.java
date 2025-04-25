@@ -51,4 +51,15 @@ public class PdfReportController {
                 .headers(headers)
                 .body(stream);
     }
+
+    @PostMapping(path = "/arima")
+    public ResponseEntity<StreamingResponseBody> exportArimaToExcel(@RequestBody Object object) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Arima-report.pdf");
+        StreamingResponseBody stream = pdfReportService.arimaToPdf(object);
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(stream);
+    }
 }
