@@ -10,8 +10,11 @@ import vla.sai.spring.fileservice.entity.*;
 import vla.sai.spring.fileservice.exception.AlreadyExistException;
 import vla.sai.spring.fileservice.repository.FileInfoRepository;
 import vla.sai.spring.fileservice.service.FileInfoService;
+import vla.sai.spring.fileservice.service.kafka.Producer;
 import vla.sai.spring.fileservice.util.FileUtil;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -22,10 +25,11 @@ import java.util.Optional;
 public class FileInfoServiceImpl implements FileInfoService {
 
     private final FileInfoRepository fileInfoRepository;
+    private final Producer producer;
 
     @Override
     @Transactional
-    public FileInfo saveFileInfo(MultipartFile file, FileDataDto fileDataDto) {
+    public FileInfo saveFileInfo(MultipartFile file, FileDataDto fileDataDto) throws IOException {
 
         String fileAuthorName = Optional.ofNullable(fileDataDto.getFileAuthorName())
                 .filter(name -> !name.isBlank())
@@ -54,6 +58,7 @@ public class FileInfoServiceImpl implements FileInfoService {
                                 .formatted(fileDataDto.getFileDataType().getValue())));
 
         FileUtil.saveFile(file, fileDataDto);
+        if (fileDataDto.getFileDataType().equals(FileDataType.FINANCIAL_ASSERT_STORY)){producer.sendCreatedFileData(file.getBytes(),fileDataDto);}
         return fileInfoRepository.save(FileInfo
                 .builder()
                 .fileId(fileId)

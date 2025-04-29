@@ -16,7 +16,6 @@ import java.nio.file.Paths;
 @RequiredArgsConstructor
 public class Consumer {
 
-
     @KafkaListener(topics = "file_create_topic", groupId = "analytics_consumers")
     public void listenCreateUserId(ConsumerRecord<FileDataDto, byte[]> record) {
         FileDataDto fileDataDto = record.key(); // Получение ключа (данных для сохранения)

@@ -30,7 +30,7 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI openAPIDefinition() {
-        String swaggerHost = (swaggerEnabled)? environment.getRequiredProperty("SWAGGER_HOSTNAME") : "localhost";
+        String swaggerHost = (swaggerEnabled)? environment.getRequiredProperty("ANALYTICS_SWAGGER_HOSTNAME") : "localhost";
         return new OpenAPI()
                 .info(new Info()
                         .title("Analytics service")

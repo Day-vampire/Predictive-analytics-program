@@ -18,13 +18,9 @@ public class Producer {
     private final KafkaTemplate<FileDataDto, byte[]> kafkaTemplateCreateFile;
     private final KafkaTemplate<String, FileDataDto> kafkaTemplateDeleteFile;
 
-    public void sendCreatedFileData(File file, FileDataDto fileDataDto) {
-        try {
-            ProducerRecord<FileDataDto, byte[]> producerRecord = new ProducerRecord<>("file_create_topic", fileDataDto,Files.readAllBytes(file.toPath()));
-            kafkaTemplateCreateFile.send(producerRecord);
-        } catch (IOException e) {
-            throw new KafkaProducerException("Method (sendCreatedFileData)",e);
-        }
+    public void sendCreatedFileData(byte[] file, FileDataDto fileDataDto) {
+        ProducerRecord<FileDataDto, byte[]> producerRecord = new ProducerRecord<>("file_create_topic", fileDataDto,file);
+        kafkaTemplateCreateFile.send(producerRecord);
     }
 
     public void sendDeletedFileData(FileDataDto fileDataDto) {
