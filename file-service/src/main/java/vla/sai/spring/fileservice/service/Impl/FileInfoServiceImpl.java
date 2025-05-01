@@ -13,7 +13,6 @@ import vla.sai.spring.fileservice.service.FileInfoService;
 import vla.sai.spring.fileservice.service.kafka.Producer;
 import vla.sai.spring.fileservice.util.FileUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -58,6 +57,7 @@ public class FileInfoServiceImpl implements FileInfoService {
                                 .formatted(fileDataDto.getFileDataType().getValue())));
 
         FileUtil.saveFile(file, fileDataDto);
+        fileDataDto.setFileName(file.getOriginalFilename());
         if (fileDataDto.getFileDataType().equals(FileDataType.FINANCIAL_ASSERT_STORY)){producer.sendCreatedFileData(file.getBytes(),fileDataDto);}
         return fileInfoRepository.save(FileInfo
                 .builder()

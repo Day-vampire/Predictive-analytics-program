@@ -10,6 +10,8 @@ import vla.sai.spring.fileservice.entity.FileDataType;
 import vla.sai.spring.fileservice.entity.FileInfo;
 import vla.sai.spring.fileservice.service.FileInfoService;
 
+import java.io.IOException;
+
 
 @RestController
 @RequestMapping(value = "/files")
@@ -23,7 +25,7 @@ public class FileController {
     public FileInfo uploadFile(
             @RequestParam(value = "file",required = false) MultipartFile file,
             @RequestParam(value = "type", required = false) FileDataType fileDataType,
-            @RequestParam(value = "authName", required = false) String fileAuthorName){
+            @RequestParam(value = "authName", required = false) String fileAuthorName) throws IOException {
         return fileInfoService.saveFileInfo(file, FileDataDto.builder().fileDataType(fileDataType).fileAuthorName(fileAuthorName).build());
     }
 }

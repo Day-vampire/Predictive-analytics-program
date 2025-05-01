@@ -11,12 +11,8 @@ spring:
   ######### Kafka #########
   kafka:
     bootstrap-servers: ${ANALYTICS_SERVICE_KAFKA_HOST}
-    producer:
-      value-serializer: org.apache.kafka.common.serialization.Serializer
-      key-serializer:
     consumer:
-      key-deserializer: org.apache.kafka.common.serialization.Serializer
-      value-deserializer: org.apache.kafka.common.serialization.Serializer
+      group-id: analytics_consumers
 
 server:
   port: ${ANALYTICS_SERVICE_SERVER_PORT}
