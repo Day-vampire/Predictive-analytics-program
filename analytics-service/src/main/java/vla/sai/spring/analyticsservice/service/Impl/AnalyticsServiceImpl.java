@@ -4,11 +4,13 @@ import org.springframework.stereotype.Service;
 import vla.sai.spring.analyticsservice.dto.AnalyticsDto;
 import vla.sai.spring.analyticsservice.service.AnalyticsService;
 
+import javax.script.ScriptException;
 import java.io.*;
 
 @Service
 public class AnalyticsServiceImpl implements AnalyticsService {
 
+    @Override
     public void smoothingGraph(AnalyticsDto analyticsDto) {
         String pythonScriptPath = "G:/Projects/Predictive-analytics-program/analytics-service/python_programs/smoothingGraph.py";
         String dataFileName = "G:/Projects/Predictive-analytics-program/FilesAnalas/financial_assert_story/MaksZOV/currency_daily_BTC_EUR.csv"; // Имя файла заменить на подстановочное
@@ -32,4 +34,13 @@ public class AnalyticsServiceImpl implements AnalyticsService {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void holtWintersGraph(AnalyticsDto analyticsDto) throws IOException, ScriptException {
+    }
+
+    @Override
+    public void arimaAnalytics(AnalyticsDto analyticsDto) {}
+    @Override
+    public void sarimaAnalytics(AnalyticsDto analyticsDto) {}
 }

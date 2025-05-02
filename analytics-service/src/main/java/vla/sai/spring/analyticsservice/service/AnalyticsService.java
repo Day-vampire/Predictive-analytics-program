@@ -7,4 +7,7 @@ import java.io.IOException;
 
 public interface AnalyticsService {
     void smoothingGraph(AnalyticsDto analyticsDto) throws IOException, ScriptException;
+    void holtWintersGraph(AnalyticsDto analyticsDto) throws IOException, ScriptException;
+    void arimaAnalytics(AnalyticsDto analyticsDto);
+    void sarimaAnalytics(AnalyticsDto analyticsDto);
 }

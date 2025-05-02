@@ -68,6 +68,11 @@ public class ExcelReportServiceImpl implements ExcelReportService {
         return null;
     }
 
+    @Override
+    public StreamingResponseBody sarimaToExcel(Object object) {
+        return null;
+    }
+
 
     // Создание стриницы с заголовками
     private Sheet createSheet(Workbook workbook, String sheetName, Field[] fields) {

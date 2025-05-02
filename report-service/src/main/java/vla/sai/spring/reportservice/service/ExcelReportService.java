@@ -8,4 +8,5 @@ public interface ExcelReportService {
     StreamingResponseBody smoothingGraphToExcel(Object object);
     StreamingResponseBody holtWintersGraphToExcel(Object object);
     StreamingResponseBody arimaToExcel(Object object);
+    StreamingResponseBody sarimaToExcel(Object object);
 }

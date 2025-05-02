@@ -37,4 +37,9 @@ public class PdfReportServiceImpl implements PdfReportService {
     public StreamingResponseBody arimaToPdf(Object object) {
         return null;
     }
+
+    @Override
+    public StreamingResponseBody sarimaToPdf(Object object) {
+        return null;
+    }
 }

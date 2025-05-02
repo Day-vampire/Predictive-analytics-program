@@ -18,8 +18,24 @@ public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
 
-    @PostMapping(path = "/smoothing")
+    @PostMapping(path = "/smoothing-graph")
     public void smoothing(AnalyticsDto analyticsDto) throws ScriptException, IOException {
         analyticsService.smoothingGraph(analyticsDto);
     }
+
+    @PostMapping(path = "/holt-winters-graph")
+    public void holtWinters(AnalyticsDto analyticsDto) throws ScriptException, IOException {
+        analyticsService.holtWintersGraph(analyticsDto);
+    }
+
+    @PostMapping(path = "/arima-model")
+    public void arima(AnalyticsDto analyticsDto) throws ScriptException, IOException {
+        analyticsService.arimaAnalytics(analyticsDto);
+    }
+
+    @PostMapping(path = "/sarima-model")
+    public void sarima(AnalyticsDto analyticsDto) throws ScriptException, IOException {
+        analyticsService.sarimaAnalytics(analyticsDto);
+    }
+
 }

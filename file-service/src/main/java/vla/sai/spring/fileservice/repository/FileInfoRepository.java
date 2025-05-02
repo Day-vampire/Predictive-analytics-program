@@ -13,4 +13,5 @@ public interface FileInfoRepository extends JpaRepository<FileInfo, FileId> {
     FileInfo save(FileInfo fileInfo);
     List<FileInfo> findAll();
     Boolean existsByFileId(FileId fileId);
+    void deleteByFileId(FileId fileId);
 }

@@ -8,4 +8,5 @@ import java.io.IOException;
 
 public interface FileInfoService {
     FileInfo saveFileInfo(MultipartFile file, FileDataDto fileDataDto) throws IOException;
+    void deleteFileInfo(FileDataDto fileDataDto) throws IOException;
 }
