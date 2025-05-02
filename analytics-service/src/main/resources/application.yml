@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: analytics-service
+
+  ######### Files #########
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  ######### Kafka #########
+  kafka:
+    bootstrap-servers: ${ANALYTICS_SERVICE_KAFKA_HOST}
+    consumer:
+      group-id: analytics_consumers
+
+server:
+  port: ${ANALYTICS_SERVICE_SERVER_PORT}
+  servlet:
+    context-path: /api/analytics-service
+
+#service.auth.url=${FILE_SERVICE_AUTH_URL}
+######### DB #########
+#
+#spring.jpa.show-sql=true
+#spring.jpa.hibernate.ddl-auto=validate
+#spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+#spring.datasource.url=${FILE_SERVICE_DATASOURCE_URL}
+#spring.datasource.username=${FILE_SERVICE_DATASOURCE_USERNAME}
+#spring.datasource.password=${FILE_SERVICE_DATASOURCE_PASSWORD}
+
+#spring.liquibase.parameters.spring.datasource.password=${FILE_SERVICE_DATASOURCE_PASSWORD}
+
+######### Swagger #########
+springdoc:
+  api-docs:
+    enabled: ${ANALYTICS_SWAGGER_ENABLED}
+    path: /api-docs
+  swagger-ui:
+    enabled: ${ANALYTICS_SWAGGER_ENABLED}
+    path: /swagger
+

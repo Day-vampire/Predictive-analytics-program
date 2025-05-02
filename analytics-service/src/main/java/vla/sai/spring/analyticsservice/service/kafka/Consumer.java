@@ -10,12 +10,10 @@ import vla.sai.spring.analyticsservice.util.FileUtil;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 @Component
 @RequiredArgsConstructor
 public class Consumer {
-
 
     @KafkaListener(topics = "file_create_topic", groupId = "analytics_consumers")
     public void listenCreateUserId(ConsumerRecord<FileDataDto, byte[]> record) {

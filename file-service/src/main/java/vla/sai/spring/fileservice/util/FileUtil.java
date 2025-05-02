@@ -3,13 +3,17 @@ package vla.sai.spring.fileservice.util;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.web.multipart.MultipartFile;
 import vla.sai.spring.fileservice.dto.FileDataDto;
+import vla.sai.spring.fileservice.entity.FileDataType;
 import vla.sai.spring.fileservice.exception.FileNotSavedException;
+import vla.sai.spring.fileservice.service.kafka.Producer;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+
 public class FileUtil {
+
     public static void saveFile(MultipartFile file, FileDataDto fileDataDto) {
         try{
             Path directoryPath = Files.createDirectories(Path.of("Files", fileDataDto.getFileDataType().getValue(), fileDataDto.getFileAuthorName()));
