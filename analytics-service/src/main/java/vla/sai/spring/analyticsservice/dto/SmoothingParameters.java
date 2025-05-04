@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class AnalyticsDto {
+public class SmoothingParameters {
     private String fileName;
-    private String AuthorName;
+    private String authorName;
 }
