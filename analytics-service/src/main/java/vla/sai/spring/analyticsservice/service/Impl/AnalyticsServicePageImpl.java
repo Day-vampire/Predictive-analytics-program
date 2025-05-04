@@ -2,6 +2,8 @@ package vla.sai.spring.analyticsservice.service.Impl;
 
 import org.springframework.stereotype.Service;
 import vla.sai.spring.analyticsservice.dto.AcfPacfParameters;
+import vla.sai.spring.analyticsservice.dto.ArimaParameters;
+import vla.sai.spring.analyticsservice.dto.HoltWintersParameters;
 import vla.sai.spring.analyticsservice.dto.SmoothingParameters;
 import vla.sai.spring.analyticsservice.service.AnalyticsServicePage;
 
@@ -16,9 +18,9 @@ public class AnalyticsServicePageImpl implements AnalyticsServicePage {
     public void smoothingGraphPage(SmoothingParameters smoothingParameters) {
         String pythonScriptPath = "G:/Projects/Predictive-analytics-program/analytics-service/python_programs/smoothingGraphPage.py";
         String dataFilePath = "G:/Projects/Predictive-analytics-program/FilesAnalas/financial_assert_story/MaksZOV/currency_daily_BTC_EUR.csv"; // Имя файла заменить на подстановочное
-        String secondArgument = "secondArgument"; // Второй аргумент
+        String secondArgument = "secondArgument"; // Второй тестовый аргумент
         ProcessBuilder processBuilder = new ProcessBuilder("py", pythonScriptPath, dataFilePath, secondArgument);
-        processBuilder.redirectErrorStream(true); // Объединяем потоки вывода и ошибок
+        processBuilder.redirectErrorStream(true); // Объедененные потоки вывода и ошибок
 
         try {
             Process process = processBuilder.start();
@@ -41,7 +43,7 @@ public class AnalyticsServicePageImpl implements AnalyticsServicePage {
     @Override
     public void acfPacfPage(AcfPacfParameters parameters) throws IOException, ScriptException {
         String pythonScriptPath = "G:/Projects/Predictive-analytics-program/analytics-service/python_programs/acfPacfGraphPage.py";
-        String dataFilePath = "G:/Projects/Predictive-analytics-program/FilesAnalas/financial_assert_story/MaksZOV/currency_daily_BTC_EUR.csv"; // Замените на ваш путь к python.exe
+        String dataFilePath = "G:/Projects/Predictive-analytics-program/FilesAnalas/financial_assert_story/MaksZOV/currency_daily_BTC_EUR.csv";
 
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "py",
@@ -76,12 +78,70 @@ public class AnalyticsServicePageImpl implements AnalyticsServicePage {
         }
     }
 
+    // заменить на подстановочное имя файла и пользователя
     @Override
-    public void holtWintersGraphPage(SmoothingParameters smoothingParameters) throws IOException, ScriptException {
+    public void holtWintersGraphPage(HoltWintersParameters parameters) throws IOException, ScriptException {
+        String pythonScriptPath = "G:/Projects/Predictive-analytics-program/analytics-service/python_programs/holtWintersGraph.py";
+        String dataFilePath = "G:/Projects/Predictive-analytics-program/FilesAnalas/financial_assert_story/MaksZOV/currency_daily_BTC_EUR.csv";
+        parameters.setNPreds(10);
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "py",
+                pythonScriptPath,
+                dataFilePath,
+                String.valueOf(parameters.getAnalyticColumn()),
+                String.valueOf(parameters.getSeasonLength()),
+                String.valueOf(parameters.getNPreds())
+        );
+
+        processBuilder.redirectErrorStream(true);
+
+        try {
+            Process process = processBuilder.start();
+            int exitCode = process.waitFor();
+            System.out.println("Exit code: " + exitCode);
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "UTF-8"))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line); // Здесь будет JSON со значениями прогноза и параметрами модели
+                }
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public void arimaAnalyticsPage(SmoothingParameters smoothingParameters) {}
+    public void arimaAnalyticsPage(ArimaParameters parameters) {
+        String pythonScriptPath = "G:/Projects/Predictive-analytics-program/analytics-service/python_programs/arimaAnalytics.py";
+        String dataFilePath = "G:/Projects/Predictive-analytics-program/FilesAnalas/financial_assert_story/MaksZOV/currency_daily_BTC_EUR.csv";
+
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "py",
+                pythonScriptPath,
+                dataFilePath,
+                String.valueOf(parameters.getAnalyticColumn()),
+                String.valueOf(parameters.getNPreds())
+        );
+
+        processBuilder.redirectErrorStream(true);
+        try {
+            Process process = processBuilder.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                System.err.println("ARIMA script exited with code: " + exitCode);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void sarimaAnalyticsPage(SmoothingParameters smoothingParameters) {}
 

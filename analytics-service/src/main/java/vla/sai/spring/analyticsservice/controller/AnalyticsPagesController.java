@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vla.sai.spring.analyticsservice.dto.AcfPacfParameters;
+import vla.sai.spring.analyticsservice.dto.ArimaParameters;
+import vla.sai.spring.analyticsservice.dto.HoltWintersParameters;
 import vla.sai.spring.analyticsservice.dto.SmoothingParameters;
 import vla.sai.spring.analyticsservice.service.AnalyticsServicePage;
 
@@ -25,13 +27,13 @@ public class AnalyticsPagesController {
     }
 
     @PostMapping(path = "/holt-winters-graph-page")
-    public void holtWinters(SmoothingParameters smoothingParameters) throws ScriptException, IOException {
-        analyticsServicePage.holtWintersGraphPage(smoothingParameters);
+    public void holtWinters(HoltWintersParameters holtWintersParameters) throws ScriptException, IOException {
+        analyticsServicePage.holtWintersGraphPage(holtWintersParameters);
     }
 
     @PostMapping(path = "/arima-model-page")
-    public void arima(SmoothingParameters smoothingParameters) throws ScriptException, IOException {
-        analyticsServicePage.arimaAnalyticsPage(smoothingParameters);
+    public void arima(ArimaParameters arimaParameters) throws ScriptException, IOException {
+        analyticsServicePage.arimaAnalyticsPage(arimaParameters);
     }
 
     @PostMapping(path = "/sarima-model-page")
