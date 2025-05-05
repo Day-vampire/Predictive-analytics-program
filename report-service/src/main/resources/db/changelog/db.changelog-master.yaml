@@ -1,0 +1,8 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: VlaSai
+      comment: "Init basic tables for repo service"
+      changes:
+        - sqlFile:
+            path: db/changeset/V0001__Init_basic_tables.sql

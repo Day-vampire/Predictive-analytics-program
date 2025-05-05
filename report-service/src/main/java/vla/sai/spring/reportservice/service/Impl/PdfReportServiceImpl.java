@@ -1,19 +1,19 @@
 package vla.sai.spring.reportservice.service.Impl;
 
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Document;
+import com.lowagie.text.Font;
+import com.lowagie.text.FontFactory;
+import com.lowagie.text.Image;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import vla.sai.spring.reportservice.exception.ExcelExportException;
-import vla.sai.spring.reportservice.exception.FieldAccessException;
-import vla.sai.spring.reportservice.service.ExcelReportService;
 import vla.sai.spring.reportservice.service.PdfReportService;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.stream.IntStream;
 
 
 @Service
@@ -42,4 +42,35 @@ public class PdfReportServiceImpl implements PdfReportService {
     public StreamingResponseBody sarimaToPdf(Object object) {
         return null;
     }
+
+    @Override
+    public StreamingResponseBody testToPdf(MultipartFile photo, String authName) throws IOException {
+        return outputStream -> {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            Document document = new Document();
+            PdfWriter.getInstance(document, byteArrayOutputStream);
+            document.open();
+
+            Font font = FontFactory.getFont(FontFactory.TIMES_ROMAN, 12, Font.BOLD);
+            document.add(new Paragraph("Имя автора: %s".formatted(authName), font));
+            document.add(new Paragraph("Строка с фонт", font));
+            document.add(new Paragraph("Строка без фонт"));
+            document.add(Chunk.NEWLINE);
+
+            if (photo != null && !photo.isEmpty()) {
+                Image image = Image.getInstance(photo.getBytes());
+                image.scalePercent(30, 10);
+                image.setAlignment(Image.ALIGN_CENTER);
+                document.add(image);
+            }
+            document.close();
+            byteArrayOutputStream.writeTo(outputStream);
+            outputStream.flush();
+        };
+    }
+
+    private void savePdfFileOnDisk(ByteArrayOutputStream outputStream) {
+    }
+
+    ;
 }

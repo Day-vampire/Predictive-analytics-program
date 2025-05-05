@@ -1,8 +1,6 @@
 ######### Spring/DB/liquibase configs #########
 
 spring:
-  config:
-    import: optional:file:.env
   application:
     name: report-file
   jpa:
@@ -15,6 +13,8 @@ spring:
     username: ${REPORT_SERVICE_DATASOURCE_USERNAME}
     password: ${REPORT_SERVICE_DATASOURCE_PASSWORD}
   liquibase:
+    url: ${REPORT_SERVICE_DATASOURCE_URL}
+    user: ${REPORT_SERVICE_DATASOURCE_USERNAME}
     password: ${REPORT_SERVICE_DATASOURCE_PASSWORD}
   cloud:
     openfeign:

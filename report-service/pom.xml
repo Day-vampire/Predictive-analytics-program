@@ -31,6 +31,7 @@
         <spring-cloud.version>2024.0.1</spring-cloud.version>
         <springdoc-openapi-starter-webmvc-ui.version>2.8.4</springdoc-openapi-starter-webmvc-ui.version>
         <apache.poi.version>3.14</apache.poi.version>
+        <openpdf.version>2.0.3</openpdf.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -43,6 +44,7 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -93,6 +95,23 @@
             <version>${apache.poi.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>${openpdf.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.17.2</version>
+        </dependency>
     </dependencies>
 
     <build>
