@@ -1,11 +1,15 @@
 package vla.sai.spring.fileservice.service.Impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vla.sai.spring.fileservice.dto.FileDataDto;
+import vla.sai.spring.fileservice.dto.FileInfoDto;
 import vla.sai.spring.fileservice.entity.FileDataType;
 import vla.sai.spring.fileservice.entity.FileExtension;
 import vla.sai.spring.fileservice.entity.FileId;
@@ -13,6 +17,7 @@ import vla.sai.spring.fileservice.entity.FileInfo;
 import vla.sai.spring.fileservice.entity.FileStatus;
 import vla.sai.spring.fileservice.exception.FileAlreadyExistException;
 import vla.sai.spring.fileservice.exception.NotFoundException;
+import vla.sai.spring.fileservice.mapper.FileInfoMapper;
 import vla.sai.spring.fileservice.repository.FileInfoRepository;
 import vla.sai.spring.fileservice.service.FileInfoService;
 import vla.sai.spring.fileservice.service.kafka.Producer;
@@ -21,15 +26,18 @@ import vla.sai.spring.fileservice.util.FileUtil;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FileInfoServiceImpl implements FileInfoService {
 
     private final FileInfoRepository fileInfoRepository;
+    private final FileInfoMapper fileInfoMapper;
     private final Producer producer;
 
     @Override
@@ -80,6 +88,7 @@ public class FileInfoServiceImpl implements FileInfoService {
                 .build());
     }
 
+    @Transactional
     @Override
     public void deleteFileInfo(FileDataDto fileDataDto) throws IOException {
 
@@ -97,8 +106,34 @@ public class FileInfoServiceImpl implements FileInfoService {
 
         if (fileInfoRepository.existsByFileId(fileId)) {
             fileInfoRepository.deleteByFileId(fileId);
+            log.info("File [%s] of user [%s] deleted from data base".formatted(fullFileName, fileAuthorName));
+            Files.delete(Path.of("file-service/src/main/resources/Files", fileDataType, fileAuthorName,fullFileName));
+            log.info("File [%s] deleted from user directory: [%s] ".formatted(fullFileName, fileAuthorName));
             producer.sendDeletedFileData(fileDataDto);
+            log.info("producer send delete massage for file [%s] ".formatted(fullFileName));
         } else throw new NotFoundException("file [%s] not found".formatted(fullFileName));
     }
+
+    @Transactional
+    @Override
+    public void deleteAllByFilesAuthorName(String fileAuthorName) throws IOException {
+        if (fileInfoRepository.existsByFileId_FileAuthorName(fileAuthorName)) {
+            fileInfoRepository.deleteAllByFileId_FileAuthorName(fileAuthorName);
+            log.info("All files of user [%s] deleted from data base".formatted(fileAuthorName));
+            Files.deleteIfExists(Path.of("file-service/src/main/resources/Files/financial_assert_story", fileAuthorName));
+            log.info("All files of user [%s] deleted from user directory financial_assert_story".formatted(fileAuthorName));
+        } else throw new NotFoundException("files of user [%s] not found in database".formatted(fileAuthorName));
+    }
+
+    @Override
+    public Page<FileInfoDto> findAll(Pageable pageable) {
+        return fileInfoRepository.findAll(pageable).map(fileInfoMapper::toDto);
+    }
+
+    @Override
+    public Page<FileInfoDto> findAllByFileAuthorName(String fileAuthorName, Pageable pageable) {
+        return fileInfoRepository.findAllByFileId_FileAuthorName(fileAuthorName, pageable).map(fileInfoMapper::toDto);
+    }
+
 }
 
