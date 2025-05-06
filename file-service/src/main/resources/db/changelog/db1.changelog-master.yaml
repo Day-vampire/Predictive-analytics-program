@@ -1,5 +1,6 @@
 databaseChangeLog:
   - changeSet:
+      context: db1
       id: 1
       author: VlaSai
       comment: "Init basic tables for file service"

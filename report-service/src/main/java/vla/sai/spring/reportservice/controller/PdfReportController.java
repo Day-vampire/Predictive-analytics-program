@@ -2,6 +2,7 @@ package vla.sai.spring.reportservice.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,14 +11,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import vla.sai.spring.reportservice.service.ExcelReportService;
 import vla.sai.spring.reportservice.service.PdfReportService;
 
 import java.io.IOException;
 
 
 @RestController
-@RequestMapping(value = "/report/pdf")
+@RequestMapping(value = "/report/pdf") //,  produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class PdfReportController {
 
@@ -67,13 +67,13 @@ public class PdfReportController {
                 .body(stream);
     }
 
-    @PostMapping(path = "/test")
+    @PostMapping(path = "/test", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<StreamingResponseBody> exportTestToPdf(
-            @RequestParam(value = "photo",required = false) MultipartFile photo,
-            @RequestParam(value = "authName", required = false) String fileAuthorName) throws IOException {
+            @RequestParam(value = "file",required = false) MultipartFile file,
+            @RequestParam(value = "authName") String name) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=test-report.pdf");
-        StreamingResponseBody stream = pdfReportService.testToPdf(photo, fileAuthorName);
+        StreamingResponseBody stream = pdfReportService.testToPdf(file, name);
         return ResponseEntity
                 .ok()
                 .headers(headers)
