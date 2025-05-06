@@ -1,56 +1,99 @@
 package vla.sai.spring.reportservice.service.Impl;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import vla.sai.spring.reportservice.dto.FileInfoDto;
+import vla.sai.spring.reportservice.dto.FilterParameters;
 import vla.sai.spring.reportservice.exception.ExcelExportException;
 import vla.sai.spring.reportservice.exception.FieldAccessException;
 import vla.sai.spring.reportservice.service.ExcelReportService;
+import vla.sai.spring.reportservice.service.feign.FileServiceClient;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.stream.IntStream;
 
 
 @Service
+@RequiredArgsConstructor
 public class ExcelReportServiceImpl implements ExcelReportService {
 
     private static final int MAX_ROWS_FOR_SHEET = 1000;
+    private final FileServiceClient fileServiceClient;
 
     @Override
-    public StreamingResponseBody dataToExcel(Object object) {
-        return outputStream -> {
-            try (Workbook workbook = new SXSSFWorkbook(100)) { // создание потоковой книги (по умолчанию 100 строк)
-                int sheetCount = 0;
-                int rowCount = 0;
-                Field[] fields = Object.class.getDeclaredFields(); // получение полей для заголовков и ячеек
-                Sheet sheet = createSheet(workbook, "List-%d".formatted(++sheetCount), fields); // создание листа с нужным названием и полями
-//                while (true) {
-//
-//                    if (objectDtoContent.isEmpty()) {
-//                        break;
-//                    }
-//                    for (objectDto objectDto : objectDtoContent) { // перебор записей из дто
-//                        if (rowCount >= MAX_ROWS_FOR_XLSX_SHEET) {
-//                            sheet = createSheet(workbook, "List-%d".formatted(++sheetCount), fields);
-//                            rowCount = 0;
-//                        }
-//                        Row row = sheet.createRow(++rowCount);
-//                        fillRow(row, objectDto, fields); // заполнение данных из дто в строку файла
-//                    }
-//
-//                    filterParameters.setPage(filterParameters.getPage() + 1);
-//                }
-                workbook.write(outputStream);
-                outputStream.flush();
-            } catch (IOException e) {
-                throw new ExcelExportException("Failed export dto data to Excel file", e);
-            }
-        };
-    }
+    public StreamingResponseBody dataToExcel(FilterParameters filterParameters) {
+            return outputStream -> {
+                try (Workbook workbook = new SXSSFWorkbook(100)) { // создание потоковой книги (по умолчанию 100 строк)
+                    int sheetCount = 0;
+                    int rowCount = 0;
+                    filterParameters.setPage(0);
+                    Field[] fields = FileInfoDto.class.getDeclaredFields();
+                    SXSSFSheet sheet = createSheet (workbook, "List-%d".formatted(++sheetCount), fields);
+
+                    while (true) {
+                        Page<FileInfoDto> fileInfoDtoPage = fileServiceClient.search(filterParameters); // получение данных из микросервиса
+                        List<FileInfoDto> fileInfoDtoPageContent = fileInfoDtoPage.getContent();
+                        if (fileInfoDtoPageContent.isEmpty()) {
+                            autoSizeColumns(sheet, fields);
+                            break;
+                        }
+                        for (FileInfoDto fileInfoDto : fileInfoDtoPageContent) { // перебор записей из дто
+                            if (rowCount >= MAX_ROWS_FOR_SHEET) {
+                                autoSizeColumns(sheet, fields);
+                                sheet = createSheet(workbook, "List-%d".formatted(++sheetCount), fields);
+                                rowCount = 0;
+                            }
+                            Row row = sheet.createRow(++rowCount);
+                            fillRow(row, fileInfoDto); // заполнение данных из дто в строку файла
+                        }
+                        filterParameters.setPage(filterParameters.getPage() + 1);
+                    }
+
+                    workbook.write(outputStream);
+                    outputStream.flush();
+                } catch (IOException e) {
+                    throw new ExcelExportException("Failed export dto data to Excel file", e);
+                }
+            };
+        }
+
+        // Создание страницы с заголовками
+        private SXSSFSheet createSheet(Workbook workbook, String sheetName, Field[] fields) {
+            SXSSFSheet sheet = (SXSSFSheet) workbook.createSheet(sheetName);
+            Row headerRow = sheet.createRow(0);
+            IntStream.range(0, fields.length).forEach(index ->
+                    headerRow
+                            .createCell(index)
+                            .setCellValue(fields[index].getName())
+            );
+            sheet.trackAllColumnsForAutoSizing();
+            return sheet;
+        }
+
+        //Заполнение строки данными
+        private void fillRow(Row row, FileInfoDto fileInfoDto) {
+            row.createCell(0).setCellValue(fileInfoDto.getFileId().toString());
+            row.createCell(1).setCellValue(fileInfoDto.getFileSize().longValue());
+            row.createCell(2).setCellValue(fileInfoDto.getFileStatus().name());
+            row.createCell(3).setCellValue(fileInfoDto.getFileType().getValue());
+            row.createCell(0).setCellValue(fileInfoDto.getIsDeleted());
+            row.createCell(0).setCellValue(fileInfoDto.getCreateTime().toString());
+            row.createCell(0).setCellValue(fileInfoDto.getLastModificationTime().toString());
+        }
+
+        //Автоматическое определение ширины столбца
+        private void autoSizeColumns(SXSSFSheet sheet, Field[] fields) {
+            IntStream.range(0, fields.length).forEach(sheet::autoSizeColumn);
+        }
 
 
     @Override
@@ -71,32 +114,5 @@ public class ExcelReportServiceImpl implements ExcelReportService {
     @Override
     public StreamingResponseBody sarimaToExcel(Object object) {
         return null;
-    }
-
-
-    // Создание стриницы с заголовками
-    private Sheet createSheet(Workbook workbook, String sheetName, Field[] fields) {
-        Sheet sheet = workbook.createSheet(sheetName);
-        Row headerRow = sheet.createRow(0);
-        IntStream.range(0, fields.length).forEach(index -> headerRow
-                .createCell(index)
-                .setCellValue(fields[index].getName())
-        );
-        return sheet;
-    }
-
-    //Заполнение строки данными
-    private void fillRow(Row row, Object objectDto, Field[] fields) {
-        IntStream.range(0, fields.length)
-                .forEach(index -> {
-                            try {
-                                fields[index].setAccessible(true);
-                                Object value = fields[index].get(objectDto);
-                                row.createCell(index).setCellValue(String.valueOf(value));
-                            } catch (IllegalAccessException e) {
-                                throw new FieldAccessException(fields[index].getName(), e);
-                            }
-                        }
-                );
     }
 }

@@ -4,12 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import vla.sai.spring.fileservice.dto.FileDataDto;
 import vla.sai.spring.fileservice.dto.FileInfoDto;
+import vla.sai.spring.fileservice.dto.FilterParameters;
 import vla.sai.spring.fileservice.entity.FileDataType;
 import vla.sai.spring.fileservice.entity.FileExtension;
 import vla.sai.spring.fileservice.entity.FileId;
@@ -28,8 +32,12 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.data.domain.Sort.by;
 
 @Slf4j
 @Service
@@ -133,6 +141,30 @@ public class FileInfoServiceImpl implements FileInfoService {
     @Override
     public Page<FileInfoDto> findAllByFileAuthorName(String fileAuthorName, Pageable pageable) {
         return fileInfoRepository.findAllByFileId_FileAuthorName(fileAuthorName, pageable).map(fileInfoMapper::toDto);
+    }
+
+    public Page<FileInfoDto> search(FilterParameters filterParameters) {
+        List<Sort.Order> orders = new ArrayList();
+        if (!filterParameters.getSortDirection().isEmpty()) {
+            filterParameters.getSortDirection().forEach((columnName, direction) ->
+                    orders.add(new Sort.Order(direction, columnName))
+            );
+        } else {
+            orders.add(new Sort.Order(null, FileInfo_.ID));
+        }
+        PageRequest pageRequest = PageRequest.of(filterParameters.getPage(), filterParameters.getRows(), by(orders));
+        Page<FileInfo> rawResult;
+        if (filterParameters.hasSearchText()) {
+            rawResult = fileInfoRepository.search(filterParameters.getSearchText(), pageRequest);
+        } else {
+            rawResult = fileInfoRepository.fetchDataByPage(pageRequest);
+        }
+        Page<FileInfoDto> mapped = rawResult.map(fileInfoMapper::toDto);
+        if (filterParameters.hasSearchText() && rawResult.getTotalElements() > 100000) {
+            return new PageImpl<>(mapped.getContent(), pageRequest, 100000);
+        } else {
+            return new PageImpl<>(mapped.getContent(), pageRequest, rawResult.getTotalElements());
+        }
     }
 
 }

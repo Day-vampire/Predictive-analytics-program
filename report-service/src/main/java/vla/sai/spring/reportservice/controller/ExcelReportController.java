@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import vla.sai.spring.reportservice.dto.FilterParameters;
 import vla.sai.spring.reportservice.service.ExcelReportService;
 
 
@@ -21,7 +22,7 @@ public class ExcelReportController {
     private final ExcelReportService excelReportService;
 
     @PostMapping(path = "/data")
-    public ResponseEntity<StreamingResponseBody> exportDataToExcel(@RequestBody Object object) {
+    public ResponseEntity<StreamingResponseBody> exportDataToExcel(@RequestBody FilterParameters object) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Data-report.xlsx");
         StreamingResponseBody stream = excelReportService.dataToExcel(object);
