@@ -16,13 +16,16 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class AnalyticsServicePageImpl implements AnalyticsServicePage {
 
-    // заменить на подстановочное имя файла и пользователя
     @Override
-    public void smoothingGraphPage(SmoothingParameters smoothingParameters) {
-        String pythonScriptPath = "G:/Projects/Predictive-analytics-program/analytics-service/python_programs/smoothingGraphPage.py";
-        String dataFilePath = "G:/Projects/Predictive-analytics-program/FilesAnalas/financial_assert_story/MaksZOV/currency_daily_BTC_EUR.csv"; // Имя файла заменить на подстановочное
-        String secondArgument = "secondArgument"; // Второй тестовый аргумент
-        ProcessBuilder processBuilder = new ProcessBuilder("py", pythonScriptPath, dataFilePath, secondArgument);
+    public void smoothingGraphPage(SmoothingParameters parameters) {
+        String dataFilePath = "analytics-service/src/main/resources/Files/financial_assert_story/%s/%s".formatted(parameters.getAuthorName(),parameters.getDataFileName());
+        String secondArgument = "secondArgument";
+
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "py",
+                "analytics-service/python_programs/smoothingGraphPage.py",
+                dataFilePath,
+                secondArgument);
         processBuilder.redirectErrorStream(true); // Объедененные потоки вывода и ошибок
 
         try {
@@ -42,15 +45,13 @@ public class AnalyticsServicePageImpl implements AnalyticsServicePage {
         }
     }
 
-    // заменить на подстановочное имя файла и пользователя
     @Override
     public void acfPacfPage(AcfPacfParameters parameters) throws IOException, ScriptException {
-        String pythonScriptPath = "G:/Projects/Predictive-analytics-program/analytics-service/python_programs/acfPacfGraphPage.py";
-        String dataFilePath = "G:/Projects/Predictive-analytics-program/FilesAnalas/financial_assert_story/MaksZOV/currency_daily_BTC_EUR.csv";
+        String dataFilePath = "analytics-service/src/main/resources/Files/financial_assert_story/%s/%s".formatted(parameters.getAuthorName(),parameters.getDataFileName());
 
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "py",
-                pythonScriptPath,
+                "analytics-service/python_programs/acfPacfGraphPage.py",
                 dataFilePath,
                 String.valueOf(parameters.getAnalyticLags()),
                 String.valueOf(parameters.getAnalyticColumn())
@@ -84,16 +85,14 @@ public class AnalyticsServicePageImpl implements AnalyticsServicePage {
     // заменить на подстановочное имя файла и пользователя
     @Override
     public void holtWintersGraphPage(HoltWintersParameters parameters) throws IOException, ScriptException {
-        String pythonScriptPath = "G:/Projects/Predictive-analytics-program/analytics-service/python_programs/holtWintersGraph.py";
-        String dataFilePath = "G:/Projects/Predictive-analytics-program/FilesAnalas/financial_assert_story/MaksZOV/currency_daily_BTC_EUR.csv";
-        parameters.setNPreds(10);
+        String dataFilePath = "analytics-service/src/main/resources/Files/financial_assert_story/%s/%s".formatted(parameters.getAuthorName(),parameters.getDataFileName());
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "py",
-                pythonScriptPath,
+                "analytics-service/python_programs/holtWintersGraphPage.py",
                 dataFilePath,
                 String.valueOf(parameters.getAnalyticColumn()),
                 String.valueOf(parameters.getSeasonLength()),
-                String.valueOf(parameters.getNPreds())
+                String.valueOf(parameters.getPeriods())
         );
 
         processBuilder.redirectErrorStream(true);
@@ -116,12 +115,11 @@ public class AnalyticsServicePageImpl implements AnalyticsServicePage {
 
     @Override
     public void arimaAnalyticsPage(ArimaParameters parameters) {
-        String pythonScriptPath = "G:/Projects/Predictive-analytics-program/analytics-service/python_programs/arimaAnalytics.py";
-        String dataFilePath = "G:/Projects/Predictive-analytics-program/FilesAnalas/financial_assert_story/MaksZOV/currency_daily_BTC_EUR.csv";
+        String dataFilePath = "analytics-service/src/main/resources/Files/financial_assert_story/%s/%s".formatted(parameters.getAuthorName(),parameters.getDataFileName());
 
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "py",
-                pythonScriptPath,
+                "analytics-service/python_programs/arimaAnalyticsPage.py",
                 dataFilePath,
                 String.valueOf(parameters.getAnalyticColumn()),
                 String.valueOf(parameters.getNPreds())
@@ -145,6 +143,7 @@ public class AnalyticsServicePageImpl implements AnalyticsServicePage {
             e.printStackTrace();
         }
     }
+
     @Override
     public void sarimaAnalyticsPage(SmoothingParameters smoothingParameters) {}
 

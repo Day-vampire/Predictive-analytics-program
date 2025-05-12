@@ -8,8 +8,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 
 @SpringBootApplication
-@EnableConfigurationProperties
-@ConfigurationPropertiesScan
 @EnableFeignClients
 public class ReportServiceApplication {
 

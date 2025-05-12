@@ -150,7 +150,7 @@ public class FileInfoServiceImpl implements FileInfoService {
                     orders.add(new Sort.Order(direction, columnName))
             );
         } else {
-            orders.add(new Sort.Order(null, FileInfo_.ID));
+//            orders.add(new Sort.Order(null, FileInfo_.ID));
         }
         PageRequest pageRequest = PageRequest.of(filterParameters.getPage(), filterParameters.getRows(), by(orders));
         Page<FileInfo> rawResult;

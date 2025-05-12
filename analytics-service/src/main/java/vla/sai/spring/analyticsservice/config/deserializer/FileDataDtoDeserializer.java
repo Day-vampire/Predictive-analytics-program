@@ -1,4 +1,4 @@
-package vla.sai.spring.analyticsservice.config;
+package vla.sai.spring.analyticsservice.config.deserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.Deserializer;
 import vla.sai.spring.analyticsservice.dto.FileDataDto;

@@ -66,7 +66,7 @@ fig.show()
 #
 # # ========== Чтение аргументов командной строки ==========
 # if len(sys.argv) < 4:
-#     print("Usage: python arimaAnalytics.py <csv_file_path> <index_column> <value_column>")
+#     print("Usage: python arimaAnalyticsPage.py <csv_file_path> <index_column> <value_column>")
 #     sys.exit(1)
 #
 # csv_file_path = sys.argv[1]

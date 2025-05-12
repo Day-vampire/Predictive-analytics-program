@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import vla.sai.spring.reportservice.dto.HoltWintersReportDto;
 import vla.sai.spring.reportservice.service.PdfReportService;
 
 import java.io.IOException;
@@ -45,16 +46,17 @@ public class PdfReportController {
                 .body(stream);
     }
 
-    @PostMapping(path = "/holtWintersGraph")
-    public ResponseEntity<StreamingResponseBody> exportHoltWintersGraphToPdf(@RequestBody Object object) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Holt-Winters-Graph-report.pdf");
-        StreamingResponseBody stream = pdfReportService.holtWintersGraphToPdf(object);
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(stream);
-    }
+//    @PostMapping(path = "/holtWintersGraph", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<StreamingResponseBody> exportHoltWintersGraphToPdf(@RequestParam(value = "file",required = false) MultipartFile file,
+//                                                                             @RequestBody HoltWintersReportDto holtWintersReportDto) throws IOException {
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Holt-Winters-Graph-report.pdf");
+//        StreamingResponseBody stream = pdfReportService.holtWintersGraphToPdf(file, holtWintersReportDto);
+//        return ResponseEntity
+//                .ok()
+//                .headers(headers)
+//                .body(stream);
+//    }
 
     @PostMapping(path = "/arima")
     public ResponseEntity<StreamingResponseBody> exportArimaToPdf(@RequestBody Object object) {

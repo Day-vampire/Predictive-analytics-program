@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class SmoothingParameters {
-    private String fileName;
+    private String dataFileName;
     private String authorName;
 }
