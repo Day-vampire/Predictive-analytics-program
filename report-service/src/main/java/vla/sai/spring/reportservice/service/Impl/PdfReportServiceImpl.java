@@ -13,6 +13,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import vla.sai.spring.reportservice.dto.AcfPacfReportDto;
 import vla.sai.spring.reportservice.dto.HoltWintersReportDto;
 import vla.sai.spring.reportservice.service.PdfReportService;
 
@@ -78,6 +79,52 @@ public class PdfReportServiceImpl implements PdfReportService {
         else {
         Path filePath = Paths.get(directoryPath,"holt_winters_report_%d.pdf".formatted(System.currentTimeMillis()));
         Files.write(filePath, byteArrayOutputStream.toByteArray());
+        }
+    }
+
+    @Override
+    public void acfPacfGraphToPdf(MultipartFile photo, AcfPacfReportDto reportDto) throws IOException {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        Document document = new Document();
+        PdfWriter.getInstance(document, byteArrayOutputStream);
+        document.open();
+
+        Font font = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.BOLD);
+        document.addTitle(("ACF/PACF Report"));
+        Paragraph headerParagraphOfReport = new Paragraph("ACF/PACF Report", font);
+        headerParagraphOfReport.setAlignment(Element.ALIGN_CENTER);
+        document.add(headerParagraphOfReport);
+        document.add(Chunk.NEWLINE);
+
+        if (photo != null && !photo.isEmpty()) {
+            Image image = Image.getInstance(photo.getBytes());
+            image.scaleToFit(500, 500);
+            image.setAlignment(Element.ALIGN_CENTER);
+            document.add(image);
+        } else {
+            document.add(new Paragraph("Graph not found"));
+        }
+
+        document.add(Chunk.NEWLINE);
+        document.add(new Paragraph("Number of analytics column for Holt Winters: %s".formatted(String.valueOf(reportDto.getAnalyticColumn()))));
+        document.add(new Paragraph("Lags of ACF/PACF: %s".formatted(String.valueOf(reportDto.getAnalyticLags()))));
+        document.add(new Paragraph("Data from file: %s".formatted(reportDto.getDataFileName())));
+        document.add(new Paragraph("Author of report: %s".formatted(reportDto.getAuthorName())));
+        document.add(new Paragraph("Creation report date: %s".formatted(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")))));
+
+        document.newPage();
+
+        document.add(new Paragraph("Analytics parameters of ACF/PCF:"));
+        document.add(new Paragraph(reportDto.getParameters()));
+
+        document.close();
+
+        String directoryPath = "report-service/src/main/resources/Reports/%s".formatted(reportDto.getAuthorName());
+        File dir = new File(directoryPath);
+        if (!dir.exists() && !dir.mkdirs()) System.err.println("Не удалось создать директорию для сохранения PDF-файлов пользователя: " + directoryPath);
+        else {
+            Path filePath = Paths.get(directoryPath,"acf_pacf_report_%d.pdf".formatted(System.currentTimeMillis()));
+            Files.write(filePath, byteArrayOutputStream.toByteArray());
         }
     }
 

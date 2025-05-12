@@ -9,5 +9,5 @@ public class ArimaParameters {
     private String dataFileName;
     private String authorName;
     private int analyticColumn;
-    private int nPreds;
+    private int periods;
 }

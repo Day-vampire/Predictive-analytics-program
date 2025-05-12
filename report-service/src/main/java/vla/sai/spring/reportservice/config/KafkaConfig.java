@@ -9,7 +9,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
+import vla.sai.spring.reportservice.config.deserializer.AcfPacfReportDtoDeserialazer;
 import vla.sai.spring.reportservice.config.deserializer.HoltWintersReportDtoDeserializer;
+import vla.sai.spring.reportservice.dto.AcfPacfReportDto;
 import vla.sai.spring.reportservice.dto.HoltWintersReportDto;
 
 import java.util.Map;
@@ -30,9 +32,24 @@ public class KafkaConfig {
     }
 
     @Bean
+    public ConsumerFactory<AcfPacfReportDto, byte[]> consumerAcfPacfReportDtoFactory() {
+        Map<String, Object> configProps = kafkaProperties.buildConsumerProperties();
+        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, AcfPacfReportDtoDeserialazer.class);
+        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
+        return new DefaultKafkaConsumerFactory<>(configProps);
+    }
+
+    @Bean
     public ConcurrentKafkaListenerContainerFactory<HoltWintersReportDto, byte[]> kafkaListenerContainerFactory() {
         ConcurrentKafkaListenerContainerFactory<HoltWintersReportDto, byte[]> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+        return factory;
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<AcfPacfReportDto, byte[]> kafkaListenerAcfPacfReportDtoContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<AcfPacfReportDto, byte[]> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerAcfPacfReportDtoFactory());
         return factory;
     }
 

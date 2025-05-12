@@ -25,7 +25,57 @@ public class AnalyticsServicePhotoImpl implements AnalyticsServicePhoto {
     private final Producer producer;
 
     @Override
-    public void smoothingGraphPhoto(SmoothingParameters smoothingParameters) throws IOException, ScriptException {
+    public void smoothingGraphPhoto(SmoothingParameters parameters) throws IOException, ScriptException {
+        String dataFilePath = "analytics-service/src/main/resources/Files/financial_assert_story/%s/%s"
+                .formatted(parameters.getAuthorName(), parameters.getDataFileName());
+
+        String columnIndex = String.valueOf(parameters.getAnalyticColumn());
+        String smoothingWindow = String.valueOf(parameters.getSmoothingWindow());
+
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "py",
+                "analytics-service/python_programs/smoothingGraphPhoto.py",
+                dataFilePath,
+                columnIndex,
+                smoothingWindow
+        );
+
+        processBuilder.redirectErrorStream(true);
+
+        try {
+            Process process = processBuilder.start();
+
+            StringBuilder base64Builder = new StringBuilder();
+            boolean base64Started = false;
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.equals("BASE64_IMAGE_START")) {
+                        base64Started = true;
+                    } else if (base64Started) {
+                        base64Builder.append(line);
+                    } else {
+                        log.info(line);
+                    }
+                }
+            }
+
+            int exitCode = process.waitFor();
+            log.info("Python завершился с кодом: {}", exitCode);
+
+            if (!base64Builder.isEmpty()) {
+                byte[] imageBytes = Base64.getDecoder().decode(base64Builder.toString());
+                Path imagePath = Paths.get("analytics-service/src/main/resources/SMOOTHING_RESULT.png");
+                Files.write(imagePath, imageBytes);
+                log.info("График сглаживания сохранён: {}", imagePath.toString());
+            } else {
+                log.warn("Base64 график сглаживания не получен.");
+            }
+
+        } catch (IOException | InterruptedException e) {
+            log.error("Ошибка выполнения smoothingGraphPage", e);
+        }
     }
 
     @Override
@@ -74,7 +124,8 @@ public class AnalyticsServicePhotoImpl implements AnalyticsServicePhoto {
                                 .dataFileName(parameters.getDataFileName())
                                 .authorName(parameters.getAuthorName())
                                 .analyticColumn(parameters.getAnalyticColumn())
-
+                                .analyticLags(parameters.getAnalyticLags())
+                                .parameters(paramsString)
                         .build());
                 log.info("Изображение и параметры отправлены: ");
             } else {
@@ -132,8 +183,57 @@ public class AnalyticsServicePhotoImpl implements AnalyticsServicePhoto {
     }
 
     @Override
-    public void arimaAnalyticsPhoto(ArimaParameters arimaParameters) {
+    public void arimaAnalyticsPhoto(ArimaParameters parameters) {
+        String dataFilePath = "analytics-service/src/main/resources/Files/financial_assert_story/%s/%s"
+                .formatted(parameters.getAuthorName(), parameters.getDataFileName());
 
+        ProcessBuilder processBuilder = new ProcessBuilder(
+                "py",
+                "analytics-service/python_programs/arimaAnalyticsPhoto.py",
+                dataFilePath,
+                String.valueOf(parameters.getAnalyticColumn()),
+                String.valueOf(parameters.getPeriods())
+        );
+
+        processBuilder.redirectErrorStream(true);
+
+        try {
+            Process process = processBuilder.start();
+
+            StringBuilder paramsBuilder = new StringBuilder();
+            StringBuilder base64Builder = new StringBuilder();
+            boolean base64Started = false;
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (line.equals("BASE64_IMAGE_START")) {
+                        base64Started = true;
+                    } else if (base64Started) {
+                        base64Builder.append(line);
+                    } else {
+                        paramsBuilder.append(line).append(System.lineSeparator());
+                    }
+                }
+            }
+
+            int exitCode = process.waitFor();
+            log.info("Python завершился с кодом: {}", exitCode);
+            String paramsOutput = paramsBuilder.toString().trim();
+
+
+            if (!base64Builder.isEmpty()) {
+                byte[] imageBytes = Base64.getDecoder().decode(base64Builder.toString());
+                Path imagePath = Paths.get("analytics-service/src/main/resources/ARIMA_RESULT.png");
+                Files.write(imagePath, imageBytes);
+                log.info("ARIMA изображение сохранено: {}", imagePath.toString());
+            } else {
+                log.warn("Base64 ARIMA изображение не получено.");
+            }
+
+        } catch (IOException | InterruptedException e) {
+            log.error("Ошибка выполнения ARIMA-скрипта", e);
+        }
     }
 
     @Override

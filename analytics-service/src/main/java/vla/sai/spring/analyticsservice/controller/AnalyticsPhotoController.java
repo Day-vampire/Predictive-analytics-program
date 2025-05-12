@@ -22,21 +22,22 @@ public class AnalyticsPhotoController {
 
     private final AnalyticsServicePhoto analyticsServicePhoto;
 
-//    @PostMapping(path = "/smoothing-graph-page")
-//    public void smoothing(SmoothingParameters smoothingParameters) throws ScriptException, IOException {
-//        analyticsServicePage.smoothingGraphPage(smoothingParameters);
-//    }
+    @PostMapping(path = "/smoothing-graph-photo")
+    public void smoothing(SmoothingParameters smoothingParameters) throws ScriptException, IOException {
+        analyticsServicePhoto.smoothingGraphPhoto(smoothingParameters);
+    }
+
 
     @PostMapping(path = "/holt-winters-graph-photo")
     public void holtWintersPhoto(HoltWintersParameters holtWintersParameters) throws ScriptException, IOException, InterruptedException {
         analyticsServicePhoto.holtWintersGraphPhoto(holtWintersParameters);
     }
 
-//    @PostMapping(path = "/arima-model-page")
-//    public void arima(ArimaParameters arimaParameters) throws ScriptException, IOException {
-//        analyticsServicePage.arimaAnalyticsPage(arimaParameters);
-//    }
-//
+    @PostMapping(path = "/arima-analyrics-photo")
+    public void arimaPhoto(ArimaParameters arimaParameters) throws ScriptException, IOException {
+        analyticsServicePhoto.arimaAnalyticsPhoto(arimaParameters);
+    }
+
 //    @PostMapping(path = "/sarima-model-page")
 //    public void sarima(SmoothingParameters smoothingParameters) throws ScriptException, IOException {
 //        analyticsServicePage.sarimaAnalyticsPage(smoothingParameters);

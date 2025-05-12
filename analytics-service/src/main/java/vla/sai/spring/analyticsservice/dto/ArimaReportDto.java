@@ -1,20 +1,16 @@
 package vla.sai.spring.analyticsservice.dto;
 
-
 import lombok.Builder;
 import lombok.Data;
 
-/**
- analyticColumn - анализируемого столбца
- seasonLength - Длина сезона
- periods - Горизонт прогноза
- */
 @Data
 @Builder
-public class HoltWintersParameters {
+public class ArimaReportDto {
     private String dataFileName;
     private String authorName;
+
     private int analyticColumn;
-    private int seasonLength;
     private int periods;
+
+    private String parameters; // полученные параметры
 }

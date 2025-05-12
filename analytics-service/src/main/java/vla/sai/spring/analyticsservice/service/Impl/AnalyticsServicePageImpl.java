@@ -19,13 +19,14 @@ public class AnalyticsServicePageImpl implements AnalyticsServicePage {
     @Override
     public void smoothingGraphPage(SmoothingParameters parameters) {
         String dataFilePath = "analytics-service/src/main/resources/Files/financial_assert_story/%s/%s".formatted(parameters.getAuthorName(),parameters.getDataFileName());
-        String secondArgument = "secondArgument";
 
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "py",
                 "analytics-service/python_programs/smoothingGraphPage.py",
                 dataFilePath,
-                secondArgument);
+                String.valueOf(parameters.getAnalyticColumn()),
+                String.valueOf(parameters.getSmoothingWindow())
+        );
         processBuilder.redirectErrorStream(true); // Объедененные потоки вывода и ошибок
 
         try {
@@ -122,7 +123,7 @@ public class AnalyticsServicePageImpl implements AnalyticsServicePage {
                 "analytics-service/python_programs/arimaAnalyticsPage.py",
                 dataFilePath,
                 String.valueOf(parameters.getAnalyticColumn()),
-                String.valueOf(parameters.getNPreds())
+                String.valueOf(parameters.getPeriods())
         );
 
         processBuilder.redirectErrorStream(true);

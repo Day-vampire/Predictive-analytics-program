@@ -8,4 +8,6 @@ import lombok.Data;
 public class SmoothingParameters {
     private String dataFileName;
     private String authorName;
+    private int analyticColumn;
+    private int smoothingWindow;
 }

@@ -2,6 +2,7 @@ package vla.sai.spring.reportservice.service;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import vla.sai.spring.reportservice.dto.AcfPacfReportDto;
 import vla.sai.spring.reportservice.dto.HoltWintersReportDto;
 
 import java.io.ByteArrayOutputStream;
@@ -13,7 +14,7 @@ public interface PdfReportService {
     StreamingResponseBody smoothingGraphToPdf(Object object);
 
     void holtWintersGraphToPdf(MultipartFile photo, HoltWintersReportDto holtWintersReportDto) throws IOException;
-
+    void acfPacfGraphToPdf(MultipartFile photo, AcfPacfReportDto acfPacfReportDto) throws IOException;
     StreamingResponseBody arimaToPdf(Object object);
     StreamingResponseBody sarimaToPdf(Object object);
     StreamingResponseBody testToPdf(MultipartFile photo, String authName) throws IOException;
