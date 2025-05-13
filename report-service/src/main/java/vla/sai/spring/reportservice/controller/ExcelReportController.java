@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import vla.sai.spring.reportservice.dto.FilterParameters;
+import vla.sai.spring.reportservice.dto.datadto.FilterParameters;
 import vla.sai.spring.reportservice.service.ExcelReportService;
 
 

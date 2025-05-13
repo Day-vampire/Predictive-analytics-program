@@ -1,4 +1,4 @@
-package vla.sai.spring.reportservice.dto;
+package vla.sai.spring.reportservice.dto.datadto;
 
 import lombok.Data;
 import org.springframework.data.domain.Sort;

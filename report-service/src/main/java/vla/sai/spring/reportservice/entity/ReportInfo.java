@@ -22,32 +22,31 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 @Entity
-public class FileInfo {
+public class ReportInfo {
 
     @EmbeddedId
-    private FileId fileId;
+    private ReportId reportId;
 
-    @Column(name ="flsize", nullable = false, precision = 10, scale = 2)
-    private BigDecimal fileSize;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name ="flext", nullable = false)
-    private FileExtension fileExtension;
+    @Column(name ="report_file_size", nullable = false, precision = 10, scale = 2)
+    private BigDecimal reportFileSize;
 
     @Enumerated(EnumType.STRING)
-    @Column(name ="flstatus", nullable = false)
-    private FileStatus fileStatus;
+    @Column(name ="report_file_extension", nullable = false)
+    private ReportFileExtension reportFileExtension;
 
     @Enumerated(EnumType.STRING)
-    @Column(name ="fldatatype", nullable = false)
-    private FileDataType fileType;
+    @Column(name ="report_type", nullable = false)
+    private ReportType reportType;
+
+    @Column(name= "report_data_file_name")
+    private String reportDataFileName;
 
     @Column(name ="deleted", columnDefinition = "false")
     private Boolean isDeleted = false;
 
-    @Column(name ="flcrtetm", nullable = false)
-    private LocalDateTime createTime;
+    @Column(name ="report_create_time", nullable = false)
+    private LocalDateTime reportCreateTime;
 
-    @Column(name ="fllstmodtm", nullable = false)
-    private LocalDateTime lastModificationTime;
+    @Column(name ="report_last_modification_time", nullable = false)
+    private LocalDateTime reportLastModificationTime;
 }

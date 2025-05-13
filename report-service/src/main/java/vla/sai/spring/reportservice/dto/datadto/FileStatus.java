@@ -1,4 +1,4 @@
-package vla.sai.spring.reportservice.entity;
+package vla.sai.spring.reportservice.dto.datadto;
 
 public enum FileStatus {
     VALID,      // файл проверен и он нормальнный

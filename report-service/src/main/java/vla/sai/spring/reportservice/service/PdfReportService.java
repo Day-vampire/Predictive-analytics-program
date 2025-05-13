@@ -2,10 +2,10 @@ package vla.sai.spring.reportservice.service;
 
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import vla.sai.spring.reportservice.dto.AcfPacfReportDto;
-import vla.sai.spring.reportservice.dto.ArimaReportDto;
-import vla.sai.spring.reportservice.dto.HoltWintersReportDto;
-import vla.sai.spring.reportservice.dto.SmoothingReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.AcfPacfReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.ArimaReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.HoltWintersReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.SmoothingReportDto;
 
 import java.io.IOException;
 

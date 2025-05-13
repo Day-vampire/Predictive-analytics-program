@@ -8,33 +8,39 @@ import com.lowagie.text.FontFactory;
 import com.lowagie.text.Image;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import vla.sai.spring.reportservice.dto.AcfPacfReportDto;
-import vla.sai.spring.reportservice.dto.ArimaReportDto;
-import vla.sai.spring.reportservice.dto.HoltWintersReportDto;
-import vla.sai.spring.reportservice.dto.SmoothingReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.AcfPacfReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.ArimaReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.HoltWintersReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.SmoothingReportDto;
+import vla.sai.spring.reportservice.entity.ReportFileExtension;
+import vla.sai.spring.reportservice.entity.ReportId;
+import vla.sai.spring.reportservice.entity.ReportInfo;
 import vla.sai.spring.reportservice.entity.ReportType;
+import vla.sai.spring.reportservice.repository.ReportInfoRepository;
 import vla.sai.spring.reportservice.service.PdfReportService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.logging.Logger;
 
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PdfReportServiceImpl implements PdfReportService {
 
-    Logger logger = Logger.getLogger(getClass().getName());
+    private final ReportInfoRepository reportInfoRepository;
 
     @Override
     public StreamingResponseBody dataToPdf(Object object) {
@@ -73,7 +79,7 @@ public class PdfReportServiceImpl implements PdfReportService {
 
         document.close();
 
-        savePdfFile(reportDto.getAuthorName(),ReportType.SMOOTHING_GRAPH_REPORT_PDF, byteArrayOutputStream);
+        savePdfFile(reportDto.getAuthorName(), reportDto.getDataFileName(), ReportType.SMOOTHING_GRAPH_REPORT_PDF, byteArrayOutputStream);
     }
 
     @Override
@@ -109,7 +115,7 @@ public class PdfReportServiceImpl implements PdfReportService {
         document.add(new Paragraph("Creation report date: %s".formatted(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")))));
         document.close();
 
-        savePdfFile(reportDto.getAuthorName(),ReportType.HOLT_WINTERS_REPORT_PDF, byteArrayOutputStream);
+        savePdfFile(reportDto.getAuthorName(),reportDto.getDataFileName(), ReportType.HOLT_WINTERS_REPORT_PDF, byteArrayOutputStream);
     }
 
     @Override
@@ -147,7 +153,7 @@ public class PdfReportServiceImpl implements PdfReportService {
         document.add(new Paragraph(reportDto.getParameters()));
 
         document.close();
-        savePdfFile(reportDto.getAuthorName(),ReportType.ACF_PACF_REPORT_PDF, byteArrayOutputStream);
+        savePdfFile(reportDto.getAuthorName(),reportDto.getDataFileName(), ReportType.ACF_PACF_REPORT_PDF, byteArrayOutputStream);
     }
 
     @Override
@@ -186,7 +192,7 @@ public class PdfReportServiceImpl implements PdfReportService {
         document.add(new Paragraph(reportDto.getParameters()));
 
         document.close();
-        savePdfFile(reportDto.getAuthorName(), ReportType.ARIMA_REPORT_PDF, byteArrayOutputStream);
+        savePdfFile(reportDto.getAuthorName(),reportDto.getDataFileName(), ReportType.ARIMA_REPORT_PDF, byteArrayOutputStream);
     }
 
     @Override
@@ -195,7 +201,7 @@ public class PdfReportServiceImpl implements PdfReportService {
     }
 
     @Override
-    public StreamingResponseBody testToPdf(MultipartFile photo, String authName) throws IOException {
+    public StreamingResponseBody testToPdf(MultipartFile photo, String authName) {
         return outputStream -> {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             Document document = new Document();
@@ -224,15 +230,29 @@ public class PdfReportServiceImpl implements PdfReportService {
     }
 
 
-
-    private void savePdfFile(String authorName, ReportType reportType, ByteArrayOutputStream byteArrayOutputStream) throws IOException {
+    private void savePdfFile(String authorName, String dataFileName, ReportType reportType, ByteArrayOutputStream byteArrayOutputStream) throws IOException {
         String directoryPath = "report-service/src/main/resources/Reports/%s".formatted(authorName);
         File dir = new File(directoryPath);
         if (!dir.exists() && !dir.mkdirs())
             log.error("Не удалось создать директорию для сохранения PDF-файлов пользователя: %s".formatted(directoryPath));
         else {
-            Path filePath = Paths.get(directoryPath,"%s_%d.pdf".formatted(reportType.getValue(), System.currentTimeMillis()));
+            Path filePath = Paths.get(directoryPath, "%s_%d.pdf".formatted(reportType.getValue(), System.currentTimeMillis()));
             Files.write(filePath, byteArrayOutputStream.toByteArray());
+            reportInfoRepository.save(ReportInfo
+                    .builder()
+                    .reportId(ReportId
+                            .builder()
+                            .reportAuthorName(authorName)
+                            .reportName(filePath.getFileName().toString())
+                            .build())
+                    .reportDataFileName(dataFileName)
+                    .isDeleted(false)
+                    .reportCreateTime(LocalDateTime.now())
+                    .reportLastModificationTime(LocalDateTime.now())
+                    .reportFileSize(BigDecimal.valueOf(Files.size(filePath)))
+                    .reportFileExtension(ReportFileExtension.PDF)
+                    .reportType(reportType)
+                    .build());
         }
     }
 }

@@ -6,10 +6,10 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import vla.sai.spring.reportservice.dto.AcfPacfReportDto;
-import vla.sai.spring.reportservice.dto.ArimaReportDto;
-import vla.sai.spring.reportservice.dto.HoltWintersReportDto;
-import vla.sai.spring.reportservice.dto.SmoothingReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.AcfPacfReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.ArimaReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.HoltWintersReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.SmoothingReportDto;
 import vla.sai.spring.reportservice.service.PdfReportService;
 
 import java.io.IOException;

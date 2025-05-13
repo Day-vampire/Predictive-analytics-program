@@ -10,10 +10,10 @@ import java.io.Serializable;
 /**
  */
 @Value
-public class FileIdDto implements Serializable {
+public class ReportIdDto implements Serializable {
     @NotNull
     @NotEmpty
     @NotBlank
-    String fileName;
-    String fileAuthorName;
+    String reportName;
+    String reportAuthorName;
 }

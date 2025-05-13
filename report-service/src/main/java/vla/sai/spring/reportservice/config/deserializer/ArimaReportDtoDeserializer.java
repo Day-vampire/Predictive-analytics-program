@@ -2,7 +2,7 @@ package vla.sai.spring.reportservice.config.deserializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.common.serialization.Deserializer;
-import vla.sai.spring.reportservice.dto.ArimaReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.ArimaReportDto;
 import vla.sai.spring.reportservice.exception.DeserializeException;
 
 import java.util.Map;

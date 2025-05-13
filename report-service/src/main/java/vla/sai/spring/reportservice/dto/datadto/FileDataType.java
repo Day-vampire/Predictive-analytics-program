@@ -1,4 +1,4 @@
-package vla.sai.spring.reportservice.entity;
+package vla.sai.spring.reportservice.dto.datadto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

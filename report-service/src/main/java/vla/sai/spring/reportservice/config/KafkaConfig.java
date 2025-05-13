@@ -13,10 +13,10 @@ import vla.sai.spring.reportservice.config.deserializer.AcfPacfReportDtoDeserial
 import vla.sai.spring.reportservice.config.deserializer.ArimaReportDtoDeserializer;
 import vla.sai.spring.reportservice.config.deserializer.HoltWintersReportDtoDeserializer;
 import vla.sai.spring.reportservice.config.deserializer.SmoothingReportDtoDeserializer;
-import vla.sai.spring.reportservice.dto.AcfPacfReportDto;
-import vla.sai.spring.reportservice.dto.ArimaReportDto;
-import vla.sai.spring.reportservice.dto.HoltWintersReportDto;
-import vla.sai.spring.reportservice.dto.SmoothingReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.AcfPacfReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.ArimaReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.HoltWintersReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.SmoothingReportDto;
 
 import java.util.Map;
 

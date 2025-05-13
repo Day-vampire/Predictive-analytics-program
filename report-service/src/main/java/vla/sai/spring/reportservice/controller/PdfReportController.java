@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import vla.sai.spring.reportservice.dto.ArimaReportDto;
-import vla.sai.spring.reportservice.dto.HoltWintersReportDto;
-import vla.sai.spring.reportservice.dto.SmoothingReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.ArimaReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.HoltWintersReportDto;
+import vla.sai.spring.reportservice.dto.analyticsdto.SmoothingReportDto;
 import vla.sai.spring.reportservice.service.PdfReportService;
 
 import java.io.IOException;

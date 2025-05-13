@@ -5,15 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum FileExtension {
-    DOC("doc"),
-    DOCX("docs"),
-    SCV("csv"),
-    TXT("txt"),
+public enum ReportFileExtension {
     XLS("xls"),
     XLSX("xlsx"),
-    PDF("pdf"),
-    NON("non");
-
+    PDF("pdf");
     private final String value;
 }

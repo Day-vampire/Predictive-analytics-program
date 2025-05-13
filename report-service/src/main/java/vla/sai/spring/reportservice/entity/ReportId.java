@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class FileId {
+public class ReportId {
 
-    @Column(name = "flname", nullable = false)
-    private String fileName;
+    @Column(name = "report_name", nullable = false)
+    private String reportName;
 
-    @Column(name = "flauthor", nullable = false)
-    private String fileAuthorName;
+    @Column(name = "report_author_name", nullable = false)
+    private String reportAuthorName;
 }

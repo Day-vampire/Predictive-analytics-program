@@ -1,4 +1,4 @@
-package vla.sai.spring.reportservice.dto;
+package vla.sai.spring.reportservice.dto.analyticsdto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

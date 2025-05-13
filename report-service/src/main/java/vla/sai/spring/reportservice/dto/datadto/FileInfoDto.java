@@ -1,16 +1,15 @@
-package vla.sai.spring.reportservice.dto;
+package vla.sai.spring.reportservice.dto.datadto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Setter;
 import lombok.Value;
-import vla.sai.spring.reportservice.entity.FileDataType;
-import vla.sai.spring.reportservice.entity.FileExtension;
-import vla.sai.spring.reportservice.entity.FileStatus;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ */
 @Value
 @Setter
 public class FileInfoDto implements Serializable {
