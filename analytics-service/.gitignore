@@ -3,7 +3,6 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-/.run/
 /logs/
 /certs/
 /Files/
@@ -22,11 +21,7 @@ target/
 *.iws
 *.iml
 *.ipr
-*.env
 
-### ENVORIMENT ###
-
-.env
 
 ### NetBeans ###
 /nbproject/private/

@@ -14,10 +14,14 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import vla.sai.spring.analyticsservice.config.deserializer.FileDataDtoDeserializer;
 import vla.sai.spring.analyticsservice.config.serializer.AcfPacfReportDtoSerializer;
+import vla.sai.spring.analyticsservice.config.serializer.ArimaReportDtoSerializer;
 import vla.sai.spring.analyticsservice.config.serializer.HoltWintersReportDtoSerializer;
+import vla.sai.spring.analyticsservice.config.serializer.SmoothingReportDtoSerializer;
 import vla.sai.spring.analyticsservice.dto.AcfPacfReportDto;
+import vla.sai.spring.analyticsservice.dto.ArimaReportDto;
 import vla.sai.spring.analyticsservice.dto.FileDataDto;
 import vla.sai.spring.analyticsservice.dto.HoltWintersReportDto;
+import vla.sai.spring.analyticsservice.dto.SmoothingReportDto;
 
 import java.util.Map;
 
@@ -62,6 +66,21 @@ public class KafkaConfig {
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
+    @Bean
+    public ProducerFactory<ArimaReportDto, byte[]> arimaPhotoReportProducerFactory() {
+        Map<String, Object> configProps = kafkaProperties.buildProducerProperties();
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ArimaReportDtoSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
+        return new DefaultKafkaProducerFactory<>(configProps);
+    }
+
+    @Bean
+    public ProducerFactory<SmoothingReportDto, byte[]> smoothingPhotoReportProducerFactory() {
+        Map<String, Object> configProps = kafkaProperties.buildProducerProperties();
+        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, SmoothingReportDtoSerializer.class);
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
+        return new DefaultKafkaProducerFactory<>(configProps);
+    }
 
 
     @Bean
@@ -74,6 +93,15 @@ public class KafkaConfig {
         return new KafkaTemplate<>(acfPacfPhotoReportProducerFactory());
     }
 
+    @Bean
+    public KafkaTemplate<ArimaReportDto, byte[]> kafkaTemplateArimaPhotoReport() {
+        return new KafkaTemplate<>(arimaPhotoReportProducerFactory());
+    }
+
+    @Bean
+    public KafkaTemplate<SmoothingReportDto, byte[]> kafkaTemplateSmoothingPhotoReport() {
+        return new KafkaTemplate<>(smoothingPhotoReportProducerFactory());
+    }
 
 
     @Bean
@@ -94,4 +122,23 @@ public class KafkaConfig {
         return new NewTopic("acf_pacf_excel_report_topic", 1, (short) 1);
     }
 
+    @Bean
+    public NewTopic ArimaPdfReportTopic() {
+        return new NewTopic("arima_pdf_report_topic", 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic ArimaExcelReportTopic() {
+        return new NewTopic("arima_excel_report_topic", 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic SmoothingPdfReportTopic() {
+        return new NewTopic("smoothing_pdf_report_topic", 1, (short) 1);
+    }
+
+    @Bean
+    public NewTopic SmoothingExcelReportTopic() {
+        return new NewTopic("smoothing_excel_report_topic", 1, (short) 1);
+    }
 }

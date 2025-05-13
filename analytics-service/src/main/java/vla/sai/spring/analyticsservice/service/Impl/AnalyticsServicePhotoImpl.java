@@ -3,17 +3,23 @@ package vla.sai.spring.analyticsservice.service.Impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import vla.sai.spring.analyticsservice.dto.*;
-import vla.sai.spring.analyticsservice.service.AnalyticsServicePage;
+import vla.sai.spring.analyticsservice.dto.AcfPacfParameters;
+import vla.sai.spring.analyticsservice.dto.AcfPacfReportDto;
+import vla.sai.spring.analyticsservice.dto.ArimaParameters;
+import vla.sai.spring.analyticsservice.dto.ArimaReportDto;
+import vla.sai.spring.analyticsservice.dto.HoltWintersParameters;
+import vla.sai.spring.analyticsservice.dto.HoltWintersReportDto;
+import vla.sai.spring.analyticsservice.dto.SmoothingParameters;
+import vla.sai.spring.analyticsservice.dto.SmoothingReportDto;
 import vla.sai.spring.analyticsservice.service.AnalyticsServicePhoto;
 import vla.sai.spring.analyticsservice.service.kafka.Producer;
 
 import javax.script.ScriptException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.List;
 
@@ -29,15 +35,12 @@ public class AnalyticsServicePhotoImpl implements AnalyticsServicePhoto {
         String dataFilePath = "analytics-service/src/main/resources/Files/financial_assert_story/%s/%s"
                 .formatted(parameters.getAuthorName(), parameters.getDataFileName());
 
-        String columnIndex = String.valueOf(parameters.getAnalyticColumn());
-        String smoothingWindow = String.valueOf(parameters.getSmoothingWindow());
-
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "py",
                 "analytics-service/python_programs/smoothingGraphPhoto.py",
                 dataFilePath,
-                columnIndex,
-                smoothingWindow
+                String.valueOf(parameters.getAnalyticColumn()),
+                String.valueOf(parameters.getSmoothingWindow())
         );
 
         processBuilder.redirectErrorStream(true);
@@ -66,9 +69,14 @@ public class AnalyticsServicePhotoImpl implements AnalyticsServicePhoto {
 
             if (!base64Builder.isEmpty()) {
                 byte[] imageBytes = Base64.getDecoder().decode(base64Builder.toString());
-                Path imagePath = Paths.get("analytics-service/src/main/resources/SMOOTHING_RESULT.png");
-                Files.write(imagePath, imageBytes);
-                log.info("График сглаживания сохранён: {}", imagePath.toString());
+                producer.sendSmoothingPdfReportData(imageBytes, SmoothingReportDto
+                        .builder()
+                        .authorName(parameters.getAuthorName())
+                        .dataFileName(parameters.getDataFileName())
+                        .smoothingWindow(parameters.getSmoothingWindow())
+                        .analyticColumn(parameters.getAnalyticColumn())
+                        .build());
+                log.info("График сглаживания отправлен");
             } else {
                 log.warn("Base64 график сглаживания не получен.");
             }
@@ -121,11 +129,11 @@ public class AnalyticsServicePhotoImpl implements AnalyticsServicePhoto {
                 byte[] imageBytes = Base64.getDecoder().decode(base64Builder.toString());
                 producer.sendAcfPacfPdfReportData(imageBytes, AcfPacfReportDto
                         .builder()
-                                .dataFileName(parameters.getDataFileName())
-                                .authorName(parameters.getAuthorName())
-                                .analyticColumn(parameters.getAnalyticColumn())
-                                .analyticLags(parameters.getAnalyticLags())
-                                .parameters(paramsString)
+                        .dataFileName(parameters.getDataFileName())
+                        .authorName(parameters.getAuthorName())
+                        .analyticColumn(parameters.getAnalyticColumn())
+                        .analyticLags(parameters.getAnalyticLags())
+                        .parameters(paramsString)
                         .build());
                 log.info("Изображение и параметры отправлены: ");
             } else {
@@ -140,7 +148,7 @@ public class AnalyticsServicePhotoImpl implements AnalyticsServicePhoto {
     @Override
     public void holtWintersGraphPhoto(HoltWintersParameters parameters) throws IOException, ScriptException, InterruptedException {
         String pythonScriptPath = "analytics-service/python_programs/holtWintersGraphPhoto.py";
-        String dataFilePath = "analytics-service/src/main/resources/Files/financial_assert_story/%s/%s".formatted(parameters.getAuthorName(),parameters.getDataFileName());
+        String dataFilePath = "analytics-service/src/main/resources/Files/financial_assert_story/%s/%s".formatted(parameters.getAuthorName(), parameters.getDataFileName());
         ProcessBuilder processBuilder = new ProcessBuilder(
                 "py", pythonScriptPath, dataFilePath,
                 String.valueOf(parameters.getAnalyticColumn()),
@@ -177,7 +185,9 @@ public class AnalyticsServicePhotoImpl implements AnalyticsServicePhoto {
                 log.info("Holt-Winters параметры: %s и фото отправлены", paramsString);
             } else throw new FileNotFoundException("Holt-Winters фото пусто");
 
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
+            log.error("Ошибка при выполнении Python скрипта", e);
+        } catch (InterruptedException e) {
             log.error("Ошибка при выполнении Python скрипта", e);
         }
     }
@@ -224,9 +234,15 @@ public class AnalyticsServicePhotoImpl implements AnalyticsServicePhoto {
 
             if (!base64Builder.isEmpty()) {
                 byte[] imageBytes = Base64.getDecoder().decode(base64Builder.toString());
-                Path imagePath = Paths.get("analytics-service/src/main/resources/ARIMA_RESULT.png");
-                Files.write(imagePath, imageBytes);
-                log.info("ARIMA изображение сохранено: {}", imagePath.toString());
+                producer.sendArimaPdfReportData(imageBytes, ArimaReportDto
+                        .builder()
+                        .authorName(parameters.getAuthorName())
+                        .dataFileName(parameters.getDataFileName())
+                        .analyticColumn(parameters.getAnalyticColumn())
+                        .periods(parameters.getPeriods())
+                        .parameters(paramsOutput)
+                        .build());
+                log.info("ARIMA изображение и параметры отправлены");
             } else {
                 log.warn("Base64 ARIMA изображение не получено.");
             }
