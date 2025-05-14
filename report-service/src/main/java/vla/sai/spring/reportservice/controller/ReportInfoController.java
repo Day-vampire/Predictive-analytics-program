@@ -10,10 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import vla.sai.spring.reportservice.dto.ReportIdDto;
-import vla.sai.spring.reportservice.entity.ReportId;
 import vla.sai.spring.reportservice.entity.ReportInfo;
 import vla.sai.spring.reportservice.entity.ReportType;
-import vla.sai.spring.reportservice.service.PdfReportService;
 import vla.sai.spring.reportservice.service.ReportInfoService;
 
 import java.time.LocalDateTime;

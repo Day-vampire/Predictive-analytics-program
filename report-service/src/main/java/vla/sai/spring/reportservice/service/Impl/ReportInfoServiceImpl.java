@@ -1,7 +1,6 @@
 package vla.sai.spring.reportservice.service.Impl;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,8 +11,6 @@ import vla.sai.spring.reportservice.entity.ReportType;
 import vla.sai.spring.reportservice.repository.ReportInfoRepository;
 import vla.sai.spring.reportservice.service.ReportInfoService;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Optional;
 

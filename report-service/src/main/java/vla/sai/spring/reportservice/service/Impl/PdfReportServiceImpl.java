@@ -23,7 +23,6 @@ import vla.sai.spring.reportservice.entity.ReportId;
 import vla.sai.spring.reportservice.entity.ReportInfo;
 import vla.sai.spring.reportservice.entity.ReportType;
 import vla.sai.spring.reportservice.exception.NotFoundException;
-import vla.sai.spring.reportservice.repository.ReportInfoRepository;
 import vla.sai.spring.reportservice.service.PdfReportService;
 import vla.sai.spring.reportservice.service.ReportInfoService;
 

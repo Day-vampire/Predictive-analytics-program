@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,8 +18,6 @@ import vla.sai.spring.reportservice.dto.analyticsdto.AcfPacfReportDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.ArimaReportDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.HoltWintersReportDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.SmoothingReportDto;
-import vla.sai.spring.reportservice.entity.ReportId;
-import vla.sai.spring.reportservice.entity.ReportInfo;
 import vla.sai.spring.reportservice.service.PdfReportService;
 
 import java.io.IOException;
@@ -145,7 +142,7 @@ public class PdfReportController {
 
     @PostMapping(path = "/delete-all-author-reports")
     @Operation(summary = "Удаление всех отчетов пользователя из дериктории", description = "Удаляет отчеты из директории")
-    public void deleteAllAuthorReports(String authorName) throws IOException {
+    public void deleteAllAuthorReports(String authorName)  {
         pdfReportService.deleteByAuthor(authorName);
     }
 
