@@ -10,11 +10,10 @@ import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import vla.sai.spring.reportservice.dto.ReportIdDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.AcfPacfReportDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.ArimaReportDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.HoltWintersReportDto;
@@ -23,12 +22,15 @@ import vla.sai.spring.reportservice.entity.ReportFileExtension;
 import vla.sai.spring.reportservice.entity.ReportId;
 import vla.sai.spring.reportservice.entity.ReportInfo;
 import vla.sai.spring.reportservice.entity.ReportType;
+import vla.sai.spring.reportservice.exception.NotFoundException;
 import vla.sai.spring.reportservice.repository.ReportInfoRepository;
 import vla.sai.spring.reportservice.service.PdfReportService;
+import vla.sai.spring.reportservice.service.ReportInfoService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -42,7 +44,8 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class PdfReportServiceImpl implements PdfReportService {
 
-    private final ReportInfoRepository reportInfoRepository;
+    private final ReportInfoService reportInfoRepository;
+
 
     @Override
     public StreamingResponseBody dataToPdf(Object object) {
@@ -117,7 +120,7 @@ public class PdfReportServiceImpl implements PdfReportService {
         document.add(new Paragraph("Creation report date: %s".formatted(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")))));
         document.close();
 
-        savePdfFile(reportDto.getAuthorName(),reportDto.getDataFileName(), ReportType.HOLT_WINTERS_REPORT_PDF, byteArrayOutputStream);
+        savePdfFile(reportDto.getAuthorName(), reportDto.getDataFileName(), ReportType.HOLT_WINTERS_REPORT_PDF, byteArrayOutputStream);
     }
 
     @Override
@@ -155,7 +158,7 @@ public class PdfReportServiceImpl implements PdfReportService {
         document.add(new Paragraph(reportDto.getParameters()));
 
         document.close();
-        savePdfFile(reportDto.getAuthorName(),reportDto.getDataFileName(), ReportType.ACF_PACF_REPORT_PDF, byteArrayOutputStream);
+        savePdfFile(reportDto.getAuthorName(), reportDto.getDataFileName(), ReportType.ACF_PACF_REPORT_PDF, byteArrayOutputStream);
     }
 
     @Override
@@ -194,7 +197,7 @@ public class PdfReportServiceImpl implements PdfReportService {
         document.add(new Paragraph(reportDto.getParameters()));
 
         document.close();
-        savePdfFile(reportDto.getAuthorName(),reportDto.getDataFileName(), ReportType.ARIMA_REPORT_PDF, byteArrayOutputStream);
+        savePdfFile(reportDto.getAuthorName(), reportDto.getDataFileName(), ReportType.ARIMA_REPORT_PDF, byteArrayOutputStream);
     }
 
     @Override
@@ -231,6 +234,29 @@ public class PdfReportServiceImpl implements PdfReportService {
         };
     }
 
+    @Override
+    public StreamingResponseBody downloadReport(ReportIdDto reportId) {
+        Path path = Paths.get("report-service/src/main/resources/Reports/%s/%s".formatted(reportId.getReportAuthorName(), reportId.getReportName()));
+        if (!Files.exists(path)) {throw new NotFoundException("отчет %s пользователя %s не найден".formatted(reportId.getReportName(),reportId.getReportAuthorName()));}
+        else {return outputStream -> {
+                try (InputStream inputStream = Files.newInputStream(path)) {inputStream.transferTo(outputStream);}
+            };
+        }
+    }
+
+    @Override
+    public void deleteReport(ReportIdDto reportId) throws IOException {
+        Files.delete(Path.of("report-service/src/main/resources/Reports", reportId.getReportAuthorName(),reportId.getReportName()));
+    }
+
+    @Override
+    public void deleteByAuthor(String authorName) {
+        try {
+            Files.deleteIfExists(Path.of("report-service/src/main/resources/Reports/%s",authorName));
+        } catch (IOException e) {
+            throw new IllegalArgumentException("отчеты уже отсутствуют");
+        }
+    }
 
     private void savePdfFile(String authorName, String dataFileName, ReportType reportType, ByteArrayOutputStream byteArrayOutputStream) throws IOException {
         String directoryPath = "report-service/src/main/resources/Reports/%s".formatted(authorName);

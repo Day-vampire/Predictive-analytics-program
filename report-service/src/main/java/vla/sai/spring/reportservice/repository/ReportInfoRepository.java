@@ -28,11 +28,12 @@ public interface ReportInfoRepository extends JpaRepository<ReportInfo, ReportId
     Page<ReportInfo> findByReportTypeAndReportId_ReportAuthorName(ReportType reportType, String reportIdReportAuthorName,Pageable pageable); // все по типу
     Page<ReportInfo> findByReportDataFileNameAndReportId_ReportAuthorName(String reportDataFileName, String reportIdReportAuthorName,Pageable pageable); // все отчеты с 1 файла с данными
     Page<ReportInfo> findByReportCreateTimeAfterAndReportId_ReportAuthorName(LocalDateTime reportCreateTimeAfter, String reportIdReportAuthorName, Pageable pageable); // все отчеты пользователя с какогото периода
-    Page<ReportInfo> findByReportCreateTimeAfterAndReportCreateTimeBefore(LocalDateTime reportCreateTimeAfter, LocalDateTime reportCreateTimeBefore, Pageable pageable); // все отчеты пользователя за какойто период
+    Page<ReportInfo> findByReportCreateTimeAfterAndReportCreateTimeBeforeAndReportId_ReportAuthorName (LocalDateTime reportCreateTimeAfter, LocalDateTime reportCreateTimeBefore, String reportAuthorName,  Pageable pageable); // все отчеты пользователя за какойто период
 
     Boolean existsByReportId(ReportId reportId);
     Boolean existsByReportId_ReportAuthorName(String reportIdFileAuthorName);
 
     void deleteByReportId(ReportId reportId);
     void deleteAllByReportId_ReportAuthorName(String reportIdFileAuthorName);
+
 }

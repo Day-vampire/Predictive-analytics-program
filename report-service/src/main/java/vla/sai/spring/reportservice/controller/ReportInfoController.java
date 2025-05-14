@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import vla.sai.spring.reportservice.dto.ReportIdDto;
 import vla.sai.spring.reportservice.entity.ReportId;
 import vla.sai.spring.reportservice.entity.ReportInfo;
 import vla.sai.spring.reportservice.entity.ReportType;
 import vla.sai.spring.reportservice.service.PdfReportService;
 import vla.sai.spring.reportservice.service.ReportInfoService;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping(value = "/report/info")
@@ -50,16 +53,42 @@ public class ReportInfoController {
     }
 
 
-
-
-
-    // Удалить определенный отчет
-    @DeleteMapping("deleteByReportId")
-    public void deleteByReportId(@RequestParam("reportId") ReportId reportId) {
-        reportInfoService.deleteByReportId(reportId);
+    @GetMapping("/findByReportTypeAndAuthor")
+    public Page<ReportInfo> findAllByDataFileName ( @RequestParam("reportType") ReportType reportType,
+                                                   @RequestParam("authorName") String authorName,
+                                                   @PageableDefault(size = 10,page = 0) Pageable pageable) {
+        return reportInfoService.findByReportTypeAndReportId_ReportAuthorName(reportType,authorName, pageable);
     }
 
-    // Удалить все отчет пользователя
+    @GetMapping("/findByDataFileNameAndAuthor")
+    public Page<ReportInfo> findAllByDataFileName (@RequestParam("dataFileName") String dataFileName,
+                                                   @RequestParam("authorName") String authorName,
+                                                   @PageableDefault(size = 10,page = 0) Pageable pageable) {
+        return reportInfoService.findByReportDataFileNameAndReportId_ReportAuthorName(dataFileName,authorName, pageable);
+    }
+
+    @GetMapping("/findByAfterDateCreationAndAuthor")
+    public Page<ReportInfo> findAllByDataFileName (@RequestParam("reportCreateTimeAfter") LocalDateTime reportCreateTimeAfter,
+                                                   @RequestParam("authorName") String authorName,
+                                                   @PageableDefault(size = 10,page = 0) Pageable pageable) {
+        return reportInfoService.findByReportCreateTimeAfterAndReportId_ReportAuthorName(reportCreateTimeAfter,authorName, pageable);
+    }
+
+    @GetMapping("/findByPeriodAndAuthor")
+    public Page<ReportInfo> findAllByDataFileName (@RequestParam("reportCreateTimeAfter") LocalDateTime reportCreateTimeAfter,
+                                                   @RequestParam("reportCreateTimeBefore") LocalDateTime reportCreateTimeBefore,
+                                                   @RequestParam("authorName") String authorName,
+                                                   @PageableDefault(size = 10,page = 0) Pageable pageable) {
+        return reportInfoService.findByReportCreateTimeAfterAndReportCreateTimeBefore(reportCreateTimeAfter,reportCreateTimeBefore,authorName, pageable);
+    }
+
+    // Удалить определенный отчет из БД
+    @DeleteMapping("deleteByReportId")
+    public void deleteByReportId(@RequestParam("reportId") ReportIdDto reportIdDto) {
+        reportInfoService.deleteByReportId(reportIdDto);
+    }
+
+    // Удалить все отчеты пользователя из БД
     @DeleteMapping("deleteByReportAuthorName")
     public void deleteByReportAuthorName(@RequestParam("reportAuthorName") String reportAuthorName) {
         reportInfoService.deleteAllByReportId_ReportAuthorName(reportAuthorName);

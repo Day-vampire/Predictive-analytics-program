@@ -1,9 +1,11 @@
 package vla.sai.spring.reportservice.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,10 +14,13 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import vla.sai.spring.reportservice.dto.ReportIdDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.AcfPacfReportDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.ArimaReportDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.HoltWintersReportDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.SmoothingReportDto;
+import vla.sai.spring.reportservice.entity.ReportId;
+import vla.sai.spring.reportservice.entity.ReportInfo;
 import vla.sai.spring.reportservice.service.PdfReportService;
 
 import java.io.IOException;
@@ -120,4 +125,28 @@ public class PdfReportController {
                 .headers(headers)
                 .body(stream);
     }
+
+    @PostMapping(path = "/download-report", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<StreamingResponseBody> exportTestToPdf( ReportIdDto reportId)  {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(reportId.getReportName()));
+        org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody stream = pdfReportService.downloadReport(reportId);
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(stream);
+}
+
+    @PostMapping(path = "/delete-report")
+    @Operation(summary = "Удаление файла пользователя из дериктории", description = "Удаляет файл из директории")
+    public void deleteReport(ReportIdDto reportIdDto) throws IOException {
+      pdfReportService.deleteReport(reportIdDto);
+    }
+
+    @PostMapping(path = "/delete-all-author-reports")
+    @Operation(summary = "Удаление всех отчетов пользователя из дериктории", description = "Удаляет отчеты из директории")
+    public void deleteAllAuthorReports(String authorName) throws IOException {
+        pdfReportService.deleteByAuthor(authorName);
+    }
+
 }
