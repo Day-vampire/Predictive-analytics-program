@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import vla.sai.spring.reportservice.dto.analyticsdto.AcfPacfReportDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.ArimaReportDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.HoltWintersReportDto;
 import vla.sai.spring.reportservice.dto.analyticsdto.SmoothingReportDto;
@@ -20,7 +22,7 @@ import java.io.IOException;
 
 
 @RestController
-@RequestMapping(value = "/report/pdf") //,  produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/report/pdf")
 @RequiredArgsConstructor
 public class PdfReportController {
 
@@ -38,24 +40,72 @@ public class PdfReportController {
     }
 
     @PostMapping(path = "/smoothingGraph", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void exportSmoothingGraphToPdf(
-            @RequestParam(value = "file", required = false) MultipartFile file,
-            @RequestBody SmoothingReportDto reportDto) throws IOException {
-        pdfReportService.smoothingGraphToPdf(file, reportDto);
-
+    public void exportSmoothingGraphToPdf(@RequestPart("file") MultipartFile file,
+                                          @RequestParam("dataFileName") String dataFileName,
+                                          @RequestParam("authorName") String authorName,
+                                          @RequestParam("analyticColumn") int analyticColumn,
+                                          @RequestParam("smoothingWindow") int smoothingWindow,
+                                          @RequestParam("parameters") String parameters) throws IOException {
+        pdfReportService.smoothingGraphToPdf(file, SmoothingReportDto
+                .builder()
+                .dataFileName(dataFileName)
+                .authorName(authorName)
+                .analyticColumn(analyticColumn)
+                .smoothingWindow(smoothingWindow)
+                .parameters(parameters)
+                .build());
     }
 
     @PostMapping(path = "/arima", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void exportArimaToPdf(
-            @RequestParam(value = "file", required = false) MultipartFile file,
-            @RequestBody ArimaReportDto reportDto) throws IOException {
-        pdfReportService.arimaToPdf(file, reportDto);
+    public void exportArimaToPdf(@RequestPart("file") MultipartFile file,
+                                 @RequestParam("dataFileName") String dataFileName,
+                                 @RequestParam("authorName") String authorName,
+                                 @RequestParam("analyticColumn") int analyticColumn,
+                                 @RequestParam("periods") int periods,
+                                 @RequestParam("parameters") String parameters) throws IOException {
+        pdfReportService.arimaToPdf(file, ArimaReportDto
+                .builder()
+                .dataFileName(dataFileName)
+                .authorName(authorName)
+                .analyticColumn(analyticColumn)
+                .periods(periods)
+                .parameters(parameters)
+                .build());
     }
 
     @PostMapping(path = "/holtWintersGraph", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void exportHoltWintersGraphToPdf(@RequestParam(value = "file", required = false) MultipartFile file,
-                                            @RequestBody HoltWintersReportDto reportDto) throws IOException {
-        pdfReportService.holtWintersGraphToPdf(file, reportDto);
+    public void exportHoltWintersGraphToPdf(@RequestPart("file") MultipartFile file,
+                                            @RequestParam("dataFileName") String dataFileName,
+                                            @RequestParam("authorName") String authorName,
+                                            @RequestParam("analyticColumn") int analyticColumn,
+                                            @RequestParam("seasonLength") int seasonLength,
+                                            @RequestParam("periods") int periods,
+                                            @RequestParam("parameters") String parameters) throws IOException {
+        pdfReportService.holtWintersGraphToPdf(file, HoltWintersReportDto
+                .builder()
+                .dataFileName(dataFileName)
+                .authorName(authorName)
+                .analyticColumn(analyticColumn)
+                .seasonLength(seasonLength)
+                .periods(periods)
+                .parameters(parameters)
+                .build());
+    }
+
+    @PostMapping(path = "/acfPacfGraph", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void exportAcfPacfGraphToPdf(@RequestPart("file") MultipartFile file,
+                                        @RequestParam("dataFileName") String dataFileName,
+                                        @RequestParam("authorName") String authorName,
+                                        @RequestParam("analyticColumn") int analyticColumn,
+                                        @RequestParam("analyticLags") int analyticLags,
+                                        @RequestParam("parameters") String parameters) throws IOException {
+        pdfReportService.acfPacfGraphToPdf(file, AcfPacfReportDto.builder()
+                .dataFileName(dataFileName)
+                .authorName(authorName)
+                .analyticColumn(analyticColumn)
+                .analyticLags(analyticLags)
+                .parameters(parameters)
+                .build());
     }
 
     @PostMapping(path = "/test", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
