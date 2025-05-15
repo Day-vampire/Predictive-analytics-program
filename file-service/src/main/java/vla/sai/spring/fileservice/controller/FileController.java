@@ -25,8 +25,7 @@ public class FileController {
     private final FileInfoService fileInfoService;
 
     @PostMapping(path = "/upload-file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "" +
-            "Загрузка файла", description = "Загружает файл и сохраняет его на сервере.")
+    @Operation(summary = "Загрузка файла", description = "Загружает файл и сохраняет его на сервере.")
     public FileInfo uploadFile(
             @RequestParam(value = "file",required = false) MultipartFile file,
             @RequestParam(value = "type", required = false) FileDataType fileDataType,

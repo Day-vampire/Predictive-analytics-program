@@ -4,14 +4,20 @@ import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import vla.sai.spring.reportservice.dto.datadto.FileInfoDto;
-import vla.sai.spring.reportservice.dto.datadto.FilterParameters;
+import vla.sai.spring.reportservice.exception.ExcelExportException;
 import vla.sai.spring.reportservice.service.ExcelReportService;
 import vla.sai.spring.reportservice.service.feign.FileServiceClient;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.List;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 
 
@@ -20,44 +26,42 @@ import java.util.stream.IntStream;
 public class ExcelReportServiceImpl implements ExcelReportService {
 
     private static final int MAX_ROWS_FOR_SHEET = 1000;
-    private final FileServiceClient fileServiceClient;
 
     @Override
-    public StreamingResponseBody dataToExcel(FilterParameters filterParameters) {
-//            return outputStream -> {
-//                try (Workbook workbook = new SXSSFWorkbook(100)) { // создание потоковой книги (по умолчанию 100 строк)
-//                    int sheetCount = 0;
-//                    int rowCount = 0;
-//                    filterParameters.setPage(0);
-//                    Field[] fields = FileInfoDto.class.getDeclaredFields();
-//                    SXSSFSheet sheet = createSheet (workbook, "List-%d".formatted(++sheetCount), fields);
-//
-//                    while (true) {
-//                        Page<FileInfoDto> fileInfoDtoPage = fileServiceClient.search(filterParameters); // получение данных из микросервиса
-//                        List<FileInfoDto> fileInfoDtoPageContent = fileInfoDtoPage.getContent();
-//                        if (fileInfoDtoPageContent.isEmpty()) {
-//                            autoSizeColumns(sheet, fields);
-//                            break;
-//                        }
-//                        for (FileInfoDto fileInfoDto : fileInfoDtoPageContent) { // перебор записей из дто
-//                            if (rowCount >= MAX_ROWS_FOR_SHEET) {
-//                                autoSizeColumns(sheet, fields);
-//                                sheet = createSheet(workbook, "List-%d".formatted(++sheetCount), fields);
-//                                rowCount = 0;
-//                            }
-//                            Row row = sheet.createRow(++rowCount);
-//                            fillRow(row, fileInfoDto); // заполнение данных из дто в строку файла
-//                        }
-//                        filterParameters.setPage(filterParameters.getPage() + 1);
-//                    }
-//
-//                    workbook.write(outputStream);
-//                    outputStream.flush();
-//                } catch (IOException e) {
-//                    throw new ExcelExportException("Failed export dto data to Excel file", e);
-//                }
-//            };
-        return null;
+    public <T> StreamingResponseBody dataToExcel(Pageable pageable, T objectType, Function<Pageable, Page<T>> feignClientMethod) {
+            return outputStream -> {
+                try (Workbook workbook = new SXSSFWorkbook(100)) { // создание потоковой книги (по умолчанию 100 строк)
+                    int sheetCount = 0;
+                    int rowCount = 0;
+                    int pageNumber = 0;
+                    Field[] fields = objectType.getClass().getDeclaredFields();
+                    SXSSFSheet sheet = createSheet (workbook, "List-%d".formatted(++sheetCount), fields);
+
+                    while (true) {
+                        Page<T> pageContent = feignClientMethod.apply(PageRequest.of(pageNumber, pageable.getPageSize()));
+                        List<T> content = pageContent.getContent();
+                        if (content.isEmpty()) {
+                            autoSizeColumns(sheet, fields);
+                            break;
+                        }
+                        for (T tDto : content) { // перебор записей из дто
+                            if (rowCount >= MAX_ROWS_FOR_SHEET) {
+                                autoSizeColumns(sheet, fields);
+                                sheet = createSheet(workbook, "List-%d".formatted(++sheetCount), fields);
+                                rowCount = 0;
+                            }
+                            Row row = sheet.createRow(++rowCount);
+                            fillRow(row, tDto); // заполнение данных из дто в строку файла
+                        }
+                        pageNumber++;
+                    }
+
+                    workbook.write(outputStream);
+                    outputStream.flush();
+                } catch (IOException e) {
+                    throw new ExcelExportException("Failed export dto data to Excel file", e);
+                }
+            };
         }
 
         // Создание страницы с заголовками
@@ -74,13 +78,7 @@ public class ExcelReportServiceImpl implements ExcelReportService {
         }
 
         //Заполнение строки данными
-        private void fillRow(Row row, FileInfoDto fileInfoDto) {
-            row.createCell(0).setCellValue(fileInfoDto.getFileId().toString());
-            row.createCell(1).setCellValue(fileInfoDto.getFileSize().longValue());
-            row.createCell(0).setCellValue(fileInfoDto.getIsDeleted());
-            row.createCell(0).setCellValue(fileInfoDto.getCreateTime().toString());
-            row.createCell(0).setCellValue(fileInfoDto.getLastModificationTime().toString());
-        }
+        private <T> void fillRow(Row row, T t) {}
 
         //Автоматическое определение ширины столбца
         private void autoSizeColumns(SXSSFSheet sheet, Field[] fields) {
