@@ -13,7 +13,6 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import vla.sai.spring.notificationservice.config.deserializer.NotificationDtoDeserialazer;
 import vla.sai.spring.notificationservice.dto.NotificationDto;
-import vla.sai.spring.notificationservice.entity.Notification;
 
 import java.util.Map;
 

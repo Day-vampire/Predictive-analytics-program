@@ -15,7 +15,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     void saveNotification(Notification notification);
 
     void deleteNotificationById(Long id);
-    void deleteNotificationByReceiver(String receiver);
+    void deleteAllNotificationByReceiver(String receiver);
 
     Page<Notification> findAllByNotificationType(NotificationType notificationType, Pageable pageable);
     Page<Notification> findAllByReceiver(String receiver, Pageable pageable);

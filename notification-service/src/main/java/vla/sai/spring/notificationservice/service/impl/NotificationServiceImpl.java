@@ -3,24 +3,22 @@ package vla.sai.spring.notificationservice.service.impl;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.mail.SimpleMailMessage;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 import vla.sai.spring.notificationservice.dto.NotificationDto;
+import vla.sai.spring.notificationservice.entity.Notification;
 import vla.sai.spring.notificationservice.entity.NotificationType;
 import vla.sai.spring.notificationservice.repository.NotificationRepository;
 import vla.sai.spring.notificationservice.service.NotificationService;
 import vla.sai.spring.notificationservice.service.mapper.NotificationMapper;
-import vla.sai.spring.notificationservice.entity.Notification;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,7 +52,7 @@ public class NotificationServiceImpl implements NotificationService {
         MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
         messageHelper.setTo(authName);
         messageHelper.setSubject(notificationType.getValue());
-        messageHelper.setText("Доброго времени суток, уважаемый %s. Ваш файл %s готов. Благодарим вас за пользование нашими услугами".formatted(authName,multipartFile.getOriginalFilename()));
+        messageHelper.setText("Доброго времени суток, уважаемый %s. Ваш файл %s готов. Благодарим вас за пользование нашими услугами".formatted(authName, multipartFile.getOriginalFilename()));
         messageHelper.setFrom(fromMail);
         messageHelper.addAttachment(multipartFile.getOriginalFilename(), multipartFile);
         emailSender.send(mimeMessage);
@@ -87,4 +85,43 @@ public class NotificationServiceImpl implements NotificationService {
                 .notificationType(notificationDto.getNotificationType())
                 .build());
     }
+
+    @Override
+    public void deleteNotificationById(Long id) {
+        notificationRepository.deleteNotificationById(id);
+    }
+
+    @Override
+    public void deleteAllNotificationByReceiver(String receiver) {
+        notificationRepository.deleteAllNotificationByReceiver(receiver);
+    }
+
+    @Override
+    public Page<NotificationDto> findAllByNotificationType(NotificationType notificationType, Pageable pageable) {
+        return notificationRepository
+                .findAllByNotificationType(notificationType, pageable)
+                .map(notificationMapper::toDto);
+    }
+
+    @Override
+    public Page<NotificationDto> findAllByReceiver(String receiver, Pageable pageable) {
+        return notificationRepository.findAllByReceiver(receiver, pageable).map(notificationMapper::toDto);
+    }
+
+    @Override
+    public Page<NotificationDto> findAllByReceiverAndNotificationType(String receiver, NotificationType type, Pageable pageable) {
+        return notificationRepository.findAllByReceiverAndNotificationType(receiver, type, pageable).map(notificationMapper::toDto);
+    }
+
+    @Override
+    public Page<NotificationDto> findAllByReceiverAndTitle(String receiver, String title, Pageable pageable) {
+        return notificationRepository.findAllByReceiverAndTitle(receiver, title, pageable).map(notificationMapper::toDto);
+    }
+
+    @Override
+    public Optional<NotificationDto> findById(Long id) {
+        return notificationRepository.findById(id).map(notificationMapper::toDto);
+    }
+
+
 }
