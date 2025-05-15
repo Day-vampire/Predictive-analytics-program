@@ -35,7 +35,6 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public NotificationDto sendNotification(NotificationDto notificationDto) throws MessagingException {
-
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message,
                 MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
@@ -50,24 +49,42 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public NotificationDto sendFileNotification(MultipartFile multipartFile, String authName) throws MessagingException {
+    public void sendFileNotification(MultipartFile multipartFile, String authName, NotificationType notificationType) throws MessagingException {
         MimeMessage mimeMessage = emailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
         messageHelper.setTo(authName);
-        messageHelper.setSubject("Notification about file");
-        messageHelper.setText("file");
+        messageHelper.setSubject(notificationType.getValue());
+        messageHelper.setText("Доброго времени суток, уважаемый %s. Ваш файл %s готов. Благодарим вас за пользование нашими услугами".formatted(authName,multipartFile.getOriginalFilename()));
         messageHelper.setFrom(fromMail);
-        messageHelper.addAttachment("file", multipartFile);
+        messageHelper.addAttachment(multipartFile.getOriginalFilename(), multipartFile);
         emailSender.send(mimeMessage);
 
-        System.out.println(authName);
-        return notificationMapper.toDto(notificationRepository.save(Notification
+        notificationRepository.saveNotification(Notification
                 .builder()
-                .title("Notification about file")
-                .body("file")
+                .title(notificationType.getValue())
+                .body("Доброго времени суток, уважаемый %s. Ваш файл готов. Благодарим вас за пользование нашими услугами".formatted(authName))
                 .receiver(authName)
-                .notificationType(NotificationType.DATA_REPORT_NOTIFICATION)
-                .build())
-        );
+                .notificationType(notificationType)
+                .build());
+    }
+
+    @Override
+    public void sendFileNotification(MultipartFile multipartFile, NotificationDto notificationDto) throws MessagingException {
+        MimeMessage mimeMessage = emailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
+        messageHelper.setTo(notificationDto.getReceiver());
+        messageHelper.setSubject(notificationDto.getTitle());
+        messageHelper.setText(notificationDto.getBody());
+        messageHelper.setFrom(fromMail);
+        messageHelper.addAttachment(multipartFile.getOriginalFilename(), multipartFile);
+        emailSender.send(mimeMessage);
+
+        notificationRepository.saveNotification(Notification
+                .builder()
+                .title(notificationDto.getTitle())
+                .body(notificationDto.getBody())
+                .receiver(notificationDto.getReceiver())
+                .notificationType(notificationDto.getNotificationType())
+                .build());
     }
 }

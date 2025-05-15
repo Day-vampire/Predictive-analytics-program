@@ -10,6 +10,8 @@ import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vla.sai.spring.notificationservice.dto.NotificationDto;
+import vla.sai.spring.notificationservice.entity.NotificationType;
+import vla.sai.spring.notificationservice.exception.MailSendException;
 import vla.sai.spring.notificationservice.service.NotificationService;
 
 @RestController
@@ -29,18 +31,18 @@ public class NotificationController {
             log.error("Error while sending out email..%s".formatted(mailException.getStackTrace()));
             return null;
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            throw new MailSendException("Ошибка при отправке сообщения %s".formatted(e.getStackTrace()));
         }
     }
 
     @PostMapping(value = "/file-notification", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public NotificationDto sendNotificationFile(@RequestParam(value = "file", required = false) MultipartFile file,
-                                                @RequestParam(value = "authName", required = false) String fileAuthorName) {
+    public void sendNotificationFile(@RequestParam(value = "file", required = false) MultipartFile file,
+                                                @RequestParam(value = "authName", required = true) String fileAuthorName,
+                                                @RequestParam(value = "notificationType", required = true)NotificationType notificationType) throws MessagingException {
         try {
-            return notificationService.sendFileNotification(file, fileAuthorName);
+             notificationService.sendFileNotification(file, fileAuthorName, notificationType);
         } catch (MessagingException mailException) {
             log.error("Error while sending out email..{}", mailException.getStackTrace());
-            return null;
         }
 
     }
