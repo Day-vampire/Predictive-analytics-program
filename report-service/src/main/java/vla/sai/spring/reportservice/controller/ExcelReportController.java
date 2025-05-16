@@ -29,7 +29,7 @@ public class ExcelReportController {
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Data-report.xlsx");
         StreamingResponseBody stream =null;
         if(FileInfoDto.class.isAssignableFrom(dto.getClass())){
-            stream = excelReportService.dataToExcel(pageable,(FileInfoDto) dto, p -> fileServiceClient.getAllFiles(p));
+            stream = excelReportService.dataToExcel(pageable,(FileInfoDto) dto, fileServiceClient::getAllFiles);
         }
 
         return ResponseEntity
