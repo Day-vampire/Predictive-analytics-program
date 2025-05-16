@@ -17,4 +17,6 @@ public class UserDto {
     Long personId;
 
     Long roleId;
+
+    boolean isDeleted;
 }
