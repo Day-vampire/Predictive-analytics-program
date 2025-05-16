@@ -6,15 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import vla.sai.spring.authservice.dto.RoleDto;
+import org.springframework.web.bind.annotation.*;
 import vla.sai.spring.authservice.dto.UserDto;
 import vla.sai.spring.authservice.service.UserService;
 
-import java.io.IOException;
 import java.util.Optional;
 
 
@@ -39,20 +34,20 @@ public class UserController {
 
     @GetMapping
     @Operation(summary = "Получение всех пользователей")
-    public Page<UserDto> getAllUsers(@PageableDefault(size = 10,page = 0) Pageable pageable) {
+    public Page<UserDto> getAllUsers(@PageableDefault(size = 10, page = 0) Pageable pageable) {
         return userService.findAll(pageable);
     }
 
     @GetMapping(path = "/find-by-role")
     @Operation(summary = "Получение всех пользователей 1 роли")
-    public Page<UserDto> getAllUserByRole(String roleName,@PageableDefault(size = 10,page = 0) Pageable pageable) {
-        return userService.findAllByRole_Name(roleName,pageable);
+    public Page<UserDto> getAllUserByRole(String roleName, @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return userService.findAllByRole_Name(roleName, pageable);
     }
 
     @GetMapping(path = "/find-by-country")
     @Operation(summary = "Получение всех пользователей 1 страны")
-    public Page<UserDto> getAllUserByCountry(String countryName,@PageableDefault(size = 10,page = 0) Pageable pageable) {
-        return userService.findAllByPerson_Country(countryName,pageable);
+    public Page<UserDto> getAllUserByCountry(String countryName, @PageableDefault(size = 10, page = 0) Pageable pageable) {
+        return userService.findAllByPerson_Country(countryName, pageable);
     }
 
     @GetMapping(path = "/find-by-id")
@@ -72,5 +67,4 @@ public class UserController {
     public UserDto save(@RequestBody UserDto userDto) {
         return userService.save(userDto);
     }
-
 }

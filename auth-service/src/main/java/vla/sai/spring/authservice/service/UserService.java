@@ -3,7 +3,6 @@ package vla.sai.spring.authservice.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import vla.sai.spring.authservice.dto.UserDto;
-import vla.sai.spring.authservice.entity.User;
 
 import java.util.Optional;
 
@@ -19,4 +18,6 @@ public interface UserService {
     Page<UserDto> findAll(Pageable pageable);
     void deleteById(Long id);
     void deleteByEmail(String email);
+    boolean existsByEmail(String email);
+
 }
