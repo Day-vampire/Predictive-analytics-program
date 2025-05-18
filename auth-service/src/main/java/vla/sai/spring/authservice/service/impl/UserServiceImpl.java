@@ -20,6 +20,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto save(UserDto userDto) {
+        System.out.println(userDto.getEmail()+userDto.getRoleId());
+        
         User user = userMapper.toEntity(userDto);
         return userMapper.toDto(userRepository.save(user));
     }
@@ -62,5 +64,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByEmail(String email) {
         return  userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return userRepository.existsById(id);
+    }
+
+    @Override
+    public void updateUserImage(Long userId, Long imageId) {
+        userRepository.updateUserImage(userId, imageId);
     }
 }

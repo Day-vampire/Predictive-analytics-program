@@ -1,19 +1,13 @@
 package vla.sai.spring.authservice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,6 +16,8 @@ import lombok.ToString;
 @ToString
 @Builder
 @Entity
+@Table(name = "users")
+@Accessors(chain = true)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,21 +26,21 @@ public class User {
     @Column(name ="email", nullable = false)
     private String email;
 
-    @Column(name ="password", nullable = false)
+    @Column(name ="password")
     private String password;
 
     @OneToOne
-    @JoinColumn(name="user_image_data_id")
+    @JoinColumn(name="user_image_data_id", nullable = true)
     private UserImageData userImageData;
 
     @OneToOne
-    @JoinColumn(name = "person_id")
+    @JoinColumn(name = "person_id", nullable = true)
     private Person person;
 
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Column(name = "is_delete")
-    private boolean isDeleted;
+    @Column(name = "deleted", nullable = false)
+    private boolean deleted;
 }

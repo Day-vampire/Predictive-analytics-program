@@ -2,6 +2,7 @@ package vla.sai.spring.authservice.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import vla.sai.spring.authservice.dto.UserDto;
 
 import java.util.Optional;
@@ -19,5 +20,6 @@ public interface UserService {
     void deleteById(Long id);
     void deleteByEmail(String email);
     boolean existsByEmail(String email);
-
+    boolean existsById(Long id);
+    void updateUserImage( Long userId, @Param("imageId") Long imageId);
 }

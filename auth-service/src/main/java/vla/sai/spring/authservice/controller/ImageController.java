@@ -11,9 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import vla.sai.spring.authservice.dto.UserImageDataDto;
 import vla.sai.spring.authservice.service.UserImageService;
 
-import java.io.IOException;
-
-
 
 @RestController
 @RequestMapping(value = "/images")
@@ -26,7 +23,7 @@ public class ImageController {
     @Operation(summary = "Загрузка фото аватара")
     public UserImageDataDto uploadFile(
             @RequestParam(value = "image",required = false) MultipartFile image,
-            @RequestParam(value = "userName", required = false) String userName){
-        return userImageService.save(image,userName);
+            @RequestParam(value = "userId", required = false) Long userId){
+        return userImageService.save(image,userId);
     }
 }

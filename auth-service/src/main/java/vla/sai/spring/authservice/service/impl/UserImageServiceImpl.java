@@ -9,7 +9,6 @@ import vla.sai.spring.authservice.entity.UserImageData;
 import vla.sai.spring.authservice.exception.FileNotSavedException;
 import vla.sai.spring.authservice.exception.NotFoundException;
 import vla.sai.spring.authservice.mapper.UserImageDataMapper;
-import vla.sai.spring.authservice.mapper.UserMapper;
 import vla.sai.spring.authservice.repository.UserImageDataRepository;
 import vla.sai.spring.authservice.service.UserImageService;
 import vla.sai.spring.authservice.service.UserService;
@@ -25,24 +24,23 @@ public class UserImageServiceImpl implements UserImageService {
 
     private final UserImageDataRepository imageDataRepository;
     private final UserService userService;
-    private final UserMapper userMapper;
     private final UserImageDataMapper userImageDataMapper;
 
     @Override
-    public UserImageDataDto save(MultipartFile image, String userName) {
+    public UserImageDataDto save(MultipartFile image, Long userId) {
         try {
-            if (!userService.existsByEmail(userName))
-                throw new NotFoundException("User with email %s not found".formatted(userName));
-
-            UserImageData userImageData = imageDataRepository.save(UserImageData
+            if (!userService.existsById(userId)) throw new NotFoundException("User with id %s not found".formatted(userId));
+            UserImageDataDto userImageDataDto = UserImageDataDto
                     .builder()
-                    .user(userMapper.toEntity(userService.findByEmail(userName).get()))
+                    .userId(userId)
                     .type(image.getContentType())
                     .name(image.getOriginalFilename())
                     .imageContent(compressImage(image.getBytes()))
-                    .build());
+                    .build();
 
-            System.out.println("проверка шармуты: " + userService.findByEmail(userName).get().getUserImageData().getName());
+            UserImageData userImageData = imageDataRepository.save(userImageDataMapper.toEntity(userImageDataDto));
+            userService.updateUserImage(userId,userImageData.getId());
+            System.out.println("проверка айди шармуты: " + userService.findById(userId).get().getUserImageDataId());
             return userImageDataMapper.toDto(userImageData);
         } catch (Exception e) {
             throw new FileNotSavedException("Image %s not saved".formatted(image.getOriginalFilename()), e);

@@ -1,20 +1,20 @@
 package vla.sai.spring.authservice.mapper;
 
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 import vla.sai.spring.authservice.dto.UserDto;
 import vla.sai.spring.authservice.entity.User;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
-    User toEntity(UserDto userDto);
 
+    @Mapping(source = "role.id", target = "roleId")
+    @Mapping(source = "person.id", target = "personId")
+    @Mapping(source = "userImageData.id", target = "userImageDataId")
     UserDto toDto(User user);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    User partialUpdate(UserDto userDto, @MappingTarget User user);
+    @Mapping(source = "roleId", target = "role.id")
+    @Mapping(source = "userImageDataId", target = "userImageData.id")
+    @Mapping(source = "personId", target = "person.id")
+    User toEntity(UserDto userDto);
+
 }

@@ -53,7 +53,7 @@ public class RoleController {
 
     @PostMapping(path = "/save")
     @Operation(summary = "Создание роли")
-    public RoleDto save(@RequestBody RoleDto roleDto) {
+    public RoleDto save(RoleDto roleDto) {
         return roleService.save(roleDto);
     }
 

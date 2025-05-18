@@ -21,6 +21,7 @@ public class RoleServiceDto implements RoleService {
 
     @Override
     public RoleDto save(RoleDto roleDto) {
+        System.out.println(roleDto.getDescription()+" "+roleDto.getName()+" "+roleDto.getId());
         Role role = roleMapper.toEntity(roleDto);
         return roleMapper.toDto(roleRepository.save(role));
     }

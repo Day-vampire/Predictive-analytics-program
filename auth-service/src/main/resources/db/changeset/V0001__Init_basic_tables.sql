@@ -1,4 +1,4 @@
-CREATE TABLE person
+CREATE TABLE persons
 (
     id        BIGSERIAL PRIMARY KEY,
     name      TEXT NOT NULL,
@@ -7,14 +7,14 @@ CREATE TABLE person
     country   TEXT
 );
 
-CREATE TABLE role
+CREATE TABLE roles
 (
     id          BIGSERIAL PRIMARY KEY,
     name        TEXT NOT NULL,
     description TEXT NOT NULL
 );
 
-CREATE TABLE user_image_data
+CREATE TABLE user_image_datas
 (
     id            BIGSERIAL PRIMARY KEY,
     name          TEXT NOT NULL,
@@ -22,17 +22,17 @@ CREATE TABLE user_image_data
     image_content BYTEA        NOT NULL
 );
 
-CREATE TABLE "user"
+CREATE TABLE "users"
 (
     id                 BIGSERIAL PRIMARY KEY,
     email              TEXT NOT NULL,
-    password           TEXT NOT NULL,
+    password           TEXT,
     user_image_data_id BIGINT,
     person_id          BIGINT,
     role_id            BIGINT       NOT NULL,
-    is_delete          BOOLEAN,
+    deleted          BOOLEAN,
 
-    CONSTRAINT fk_user_user_image_data FOREIGN KEY (user_image_data_id) REFERENCES user_image_data (id),
-    CONSTRAINT fk_user_person FOREIGN KEY (person_id) REFERENCES person (id),
-    CONSTRAINT fk_user_role FOREIGN KEY (role_id) REFERENCES role (id)
+    CONSTRAINT fk_user_user_image_data FOREIGN KEY (user_image_data_id) REFERENCES user_image_datas (id),
+    CONSTRAINT fk_user_person FOREIGN KEY (person_id) REFERENCES persons (id),
+    CONSTRAINT fk_user_role FOREIGN KEY (role_id) REFERENCES roles (id)
 );

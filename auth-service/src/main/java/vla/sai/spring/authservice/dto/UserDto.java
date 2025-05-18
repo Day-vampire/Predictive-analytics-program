@@ -9,14 +9,10 @@ import vla.sai.spring.authservice.entity.UserImageData;
 public class UserDto {
 
     Long id;
-
     String email;
-
-    UserImageData userImageData;
-
+    Long userImageDataId;
     Long personId;
-
     Long roleId;
 
-    boolean isDeleted;
+    boolean deleted;
 }

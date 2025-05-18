@@ -64,7 +64,7 @@ public class UserController {
 
     @PostMapping(path = "/save")
     @Operation(summary = "Создание пользователя")
-    public UserDto save(@RequestBody UserDto userDto) {
+    public UserDto save(UserDto userDto) {
         return userService.save(userDto);
     }
 }
