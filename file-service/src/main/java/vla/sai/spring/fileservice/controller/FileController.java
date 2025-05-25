@@ -35,7 +35,7 @@ public class FileController {
 
     @PostMapping(path = "/delete-file")
     @Operation(summary = "Удаление файла пользователя", description = "Удаляет файл из директории и БД")
-    public void deleteFile(FileDataDto fileDataDto) throws IOException {
+    public void deleteFile(@RequestBody FileDataDto fileDataDto) throws IOException {
         fileInfoService.deleteFileInfo(fileDataDto);
     }
 

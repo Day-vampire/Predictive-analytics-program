@@ -31,5 +31,6 @@ public class Consumer {
 
     @KafkaListener(topics = "file_delete_topic", groupId = "analytics_consumers")
     public void listenDeleteUserId(ConsumerRecord<FileDataDto, String> record) {
-       }
+
+    }
 }

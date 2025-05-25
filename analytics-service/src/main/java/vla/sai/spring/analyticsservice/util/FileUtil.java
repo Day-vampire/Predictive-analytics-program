@@ -10,7 +10,7 @@ import java.nio.file.Path;
 public class FileUtil {
     public static Path saveFile(FileDataDto fileDataDto) {
         try{
-            Path directoryPath = Files.createDirectories(Path.of("src/main/resources/FilesAnalytics", fileDataDto.getFileDataType().getValue(), fileDataDto.getFileAuthorName()));
+            Path directoryPath = Files.createDirectories(Path.of("analytics-service/src/main/resources/Files", fileDataDto.getFileDataType().getValue(), fileDataDto.getFileAuthorName()));
             String fileName = fileDataDto.getFileName();
             return Path.of(directoryPath.toString(), fileName);
         } catch (IOException e) {

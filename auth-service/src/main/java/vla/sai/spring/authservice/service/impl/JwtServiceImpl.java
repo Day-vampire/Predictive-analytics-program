@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import vla.sai.spring.authservice.service.JwtService;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.time.Duration;
 import java.util.Date;
@@ -42,7 +43,15 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        String role = userDetails.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("ROLE_USER"); // или null/throw
+
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("role", role);
+
+        return generateToken(extraClaims, userDetails);
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {

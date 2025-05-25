@@ -100,6 +100,7 @@ public class FileInfoServiceImpl implements FileInfoService {
     @Override
     public void deleteFileInfo(FileDataDto fileDataDto) throws IOException {
 
+        System.out.println(fileDataDto.getFileAuthorName());
         String fileAuthorName = Optional.ofNullable(fileDataDto.getFileAuthorName())
                 .filter(name -> !name.isBlank())
                 .orElseThrow(() -> new IllegalArgumentException("fileAuthorName is null or empty"));

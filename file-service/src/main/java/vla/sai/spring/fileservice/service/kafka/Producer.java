@@ -24,7 +24,7 @@ public class Producer {
     }
 
     public void sendDeletedFileData(FileDataDto fileDataDto) {
-        ProducerRecord<String, FileDataDto> producerRecord = new ProducerRecord<>("file_delete_topic", "deletedFile", fileDataDto);
+        ProducerRecord<String, FileDataDto> producerRecord = new ProducerRecord<>("file_delete_topic", fileDataDto);
         kafkaTemplateDeleteFile.send(producerRecord);
     }
 }
