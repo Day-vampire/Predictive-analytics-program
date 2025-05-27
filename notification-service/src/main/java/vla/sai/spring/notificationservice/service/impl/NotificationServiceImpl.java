@@ -57,7 +57,7 @@ public class NotificationServiceImpl implements NotificationService {
         messageHelper.addAttachment(multipartFile.getOriginalFilename(), multipartFile);
         emailSender.send(mimeMessage);
 
-        notificationRepository.saveNotification(Notification
+        notificationRepository.save(Notification
                 .builder()
                 .title(notificationType.getValue())
                 .body("Доброго времени суток, уважаемый %s. Ваш файл готов. Благодарим вас за пользование нашими услугами".formatted(authName))
@@ -77,7 +77,7 @@ public class NotificationServiceImpl implements NotificationService {
         messageHelper.addAttachment(multipartFile.getOriginalFilename(), multipartFile);
         emailSender.send(mimeMessage);
 
-        notificationRepository.saveNotification(Notification
+        notificationRepository.save(Notification
                 .builder()
                 .title(notificationDto.getTitle())
                 .body(notificationDto.getBody())

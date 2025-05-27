@@ -1,4 +1,4 @@
-package vla.sai.spring.analyticsservice.config;
+package vla.sai.spring.reportservice.config;
 
 
 import org.springframework.context.annotation.Configuration;

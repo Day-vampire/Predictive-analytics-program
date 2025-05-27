@@ -1,4 +1,4 @@
-CREATE TABLE notification
+CREATE TABLE notifications
 (
     id                BIGSERIAL PRIMARY KEY,
     title             TEXT NOT NULL,

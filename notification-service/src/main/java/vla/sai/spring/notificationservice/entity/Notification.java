@@ -10,6 +10,7 @@ import lombok.*;
 @ToString
 @Builder
 @Entity
+@Table(name = "notifications")
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

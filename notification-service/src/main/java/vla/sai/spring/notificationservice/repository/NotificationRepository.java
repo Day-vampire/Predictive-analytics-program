@@ -12,7 +12,6 @@ import java.util.Optional;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
     Notification save(Notification notification);
-    void saveNotification(Notification notification);
 
     void deleteNotificationById(Long id);
     void deleteAllNotificationByReceiver(String receiver);
