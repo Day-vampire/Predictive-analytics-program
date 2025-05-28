@@ -124,7 +124,7 @@ public class PdfReportController {
     }
 
     @PostMapping(path = "/download-report", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<StreamingResponseBody> exportTestToPdf( ReportIdDto reportId)  {
+    public ResponseEntity<StreamingResponseBody> exportTestToPdf(ReportIdDto reportId)  {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=%s".formatted(reportId.getReportName()));
         org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody stream = pdfReportService.downloadReport(reportId);

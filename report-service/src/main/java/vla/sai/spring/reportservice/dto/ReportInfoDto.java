@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 
 public class ReportInfoDto implements Serializable {
-    ReportIdDto fileId;
+    ReportIdDto reportId;
     @NotNull
     BigDecimal reportFileSize;
     @NotNull
