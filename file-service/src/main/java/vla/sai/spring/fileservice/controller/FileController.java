@@ -1,7 +1,10 @@
 package vla.sai.spring.fileservice.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springdoc.webmvc.core.service.RequestService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,6 +23,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping(value = "/files")
 @RequiredArgsConstructor
+@Slf4j
 public class FileController {
 
     private final FileInfoService fileInfoService;
@@ -53,7 +57,14 @@ public class FileController {
 
     @GetMapping(path = "/user-files")
     @Operation(summary = "Получение файлов пользователя ", description = "Получает все файлы пользователя из БД")
-    public Page<FileInfoDto> getAllFilesByAuthorName(String authorName, @PageableDefault(size = 10,page = 0) Pageable pageable) {
+    public Page<FileInfoDto> getAllFilesByAuthorName(HttpServletRequest request, String authorName, @PageableDefault(size = 10,page = 0) Pageable pageable) {
+        log.info("my getRequestURI: " + request.getRequestURI());
+        log.info("my getPathInfo: " + request.getPathInfo());
+        log.info("my getAuthType: " + request.getAuthType());
+        log.info("my getRemoteUser: " + request.getRemoteUser());
+        log.info("my getHeaderNames: " + request.getHeaderNames());
+        log.info("my getCookies: " + request.getCookies());
+
         return fileInfoService.findAllByFileAuthorName(authorName, pageable);
     }
 

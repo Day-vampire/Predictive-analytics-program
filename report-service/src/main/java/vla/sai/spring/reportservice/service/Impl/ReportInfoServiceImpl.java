@@ -4,11 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vla.sai.spring.reportservice.dto.ReportIdDto;
 import vla.sai.spring.reportservice.dto.ReportInfoDto;
-import vla.sai.spring.reportservice.entity.ReportId;
 import vla.sai.spring.reportservice.entity.ReportInfo;
 import vla.sai.spring.reportservice.entity.ReportType;
+import vla.sai.spring.reportservice.mapper.ReportIdMapper;
 import vla.sai.spring.reportservice.mapper.ReportInfoMapper;
 import vla.sai.spring.reportservice.repository.ReportInfoRepository;
 import vla.sai.spring.reportservice.service.ReportInfoService;
@@ -22,6 +23,7 @@ public class ReportInfoServiceImpl implements ReportInfoService {
 
     private final ReportInfoRepository reportInfoRepository;
     private final ReportInfoMapper reportInfoMapper;
+    private final ReportIdMapper reportIdMapper;
 
     @Override
     public Page<ReportInfoDto> findAll(Pageable pageable) {
@@ -44,6 +46,7 @@ public class ReportInfoServiceImpl implements ReportInfoService {
     }
 
     @Override
+    @Transactional
     public void deleteByReportId(ReportIdDto reportIdDto) {
 
         String reportAuthorName = Optional.ofNullable(reportIdDto.getReportAuthorName())
@@ -52,8 +55,7 @@ public class ReportInfoServiceImpl implements ReportInfoService {
         String reportName = Optional.ofNullable(reportIdDto.getReportName())
                 .filter(name -> !name.isBlank())
                 .orElseThrow(() -> new IllegalArgumentException("reportName is null or empty"));
-        ReportId reportId = new ReportId(reportAuthorName,reportName);
-        reportInfoRepository.deleteByReportId(reportId);
+        reportInfoRepository.deleteByReportId(reportIdMapper.toEntity(reportIdDto));
     }
 
     @Override
